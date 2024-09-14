@@ -1,17 +1,17 @@
 compatibility_date = "2024-01-29"
-name = "qiita-hackathon-2024-qualify-backend"
+name = "qiita-hackathon-2024-09-qualify-backend"
 send_metrics = false
 
 [[env.dev.d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "qiita-hackathon-2024-qualify"
+database_name = "qiita-hackathon-2024-09-qualify"
 database_id = "00000000-0000-0000-0000-000000000000"
 preview_database_id = "local-test-db"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "qiita-hackathon-2024-qualify"
-database_id = "ad4a74c2-4d88-4126-a216-1fc288fccf68"
+database_name = "qiita-hackathon-2024-09-qualify"
+database_id = "c795f4ca-2eda-41da-9e8c-5c9241f088fe"
 
 [env.dev.vars]
 ENVIROMENT = "dev"
