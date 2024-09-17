@@ -9,7 +9,7 @@
     "lint": "next lint",
     "pages:build": "pnpm next-on-pages",
     "pages:preview": "pnpm pages:build && wrangler pages dev .vercel/output/static --compatibility-date=2024-01-29 --compatibility-flag=nodejs_compat",
-    "pages:deploy": "pnpm pages:build && wrangler pages deploy .vercel/output/static --project-name=qiita-hackathon-2024-qualify-frontend"
+    "pages:deploy": "pnpm pages:build && wrangler pages deploy .vercel/output/static --project-name=qiita-hackathon-2024-09-qualify-frontend"
   },
   "dependencies": {
     "date-fns": "^4.0.0",
