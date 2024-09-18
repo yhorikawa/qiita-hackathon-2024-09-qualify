@@ -1,5 +1,5 @@
 import { hc } from "hono/client";
-import { AppType } from "../../../backend/src/index";
+import type { AppType } from "../../../backend/src/index";
 
 const ENDPOINT =
   process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:3000";
