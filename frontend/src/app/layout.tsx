@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const runtime = "edge";
 
 export const metadata: Metadata = {
-  title: "Bottle Links",
-  description: "Bottle Linksは、ボトルメールを送受信できるサービスです。",
+  title: "マンホールは大体円型PJ",
+  description: "マンホールは大体円型なPJです",
 };
 
 export default function RootLayout({
