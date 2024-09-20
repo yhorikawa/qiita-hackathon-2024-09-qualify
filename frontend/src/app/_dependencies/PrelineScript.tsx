@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { IStaticMethods } from "preline/preline";
+import type { IStaticMethods } from "preline/preline";
 declare global {
   interface Window {
     HSStaticMethods: IStaticMethods;

@@ -12,10 +12,10 @@
     "pages:deploy": "pnpm pages:build && wrangler pages deploy .vercel/output/static --project-name=qiita-hackathon-2024-09-qualify-frontend"
   },
   "dependencies": {
-    "date-fns": "^4.0.0",
-    "hono": "^4.6.1",
+    "date-fns": "^4.1.0",
+    "hono": "^4.6.2",
     "lottie-react": "^2.4.0",
-    "next": "14.2.11",
+    "next": "14.2.12",
     "preline": "^2.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -28,13 +28,13 @@
     "@cloudflare/next-on-pages": "^1.13.2",
     "@cloudflare/workers-types": "^4.20240909.0",
     "@types/node": "^22.5.5",
-    "@types/react": "^18.3.6",
+    "@types/react": "^18.3.7",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.11",
+    "tailwindcss": "^3.4.12",
     "typescript": "^5.6.2",
     "vercel": "^37.4.2",
-    "wrangler": "^3.78.2"
+    "wrangler": "^3.78.5"
   }
 }
