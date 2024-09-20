@@ -13,11 +13,7 @@ git pull
 pnpm install
 
 ## create .env
-if [ "$CODESPACES" = "true" ]; then
-  cp ./frontend/.env.example.codespaces ./frontend/.env
-else
-  cp ./frontend/.env.example ./frontend/.env
-fi
+cp ./frontend/.env.example ./frontend/.env
 
 ## migration
 # pnpm -C backend run migrate:local
