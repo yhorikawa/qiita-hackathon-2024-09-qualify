@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
 import type { Bindings } from "./index";
+import * as db from "../../gen/sqlc/querier";
 
 const app = new Hono<{ Bindings: Bindings }>();
 const route = app
@@ -10,11 +11,33 @@ const route = app
     zValidator("json", z.object({ message: z.string() })),
     async (c) => {
       const { message } = await c.req.valid("json");
+      const code = crypto.randomUUID();
+      await db.createConversation(
+        c.env.DB,
+        { code }
+      );
+
+      const conversation = await db.getConversationByCode(c.env.DB, { code });
+      if (!conversation) {
+        c.status(500);
+        return c.json({ success: false, error: "Failed to create conversation" });
+      }
+
+      await db.createMessage(
+        c.env.DB,
+        { conversationId: conversation.id, sender: "user", message }
+      );
+
+      const aiResponse = "Hello! How can I help you today?";
+      await db.createMessage(
+        c.env.DB,
+        { conversationId: conversation.id, sender: "ai", message: aiResponse }
+      );
 
       c.status(201);
       return c.json({
         success: true,
-        data: { conversation_id: 1234, ai_response: message },
+        data: { conversation_id: conversation.id, ai_response: aiResponse },
       });
     },
   )
