@@ -23,3 +23,7 @@ Content-Type: application/json
 ###
 GET {{host}}/api/v1/conversations/1
 Content-Type: application/json
+
+###
+GET {{host}}/api/v1/conversations/1/messages
+Content-Type: application/json
