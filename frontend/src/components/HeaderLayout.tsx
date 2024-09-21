@@ -6,7 +6,10 @@ export const HeaderLayout = () => {
       <p className="font-semibold text-sm leading-5">
         なんかサービスロゴ的なもの
       </p>
-      <Link href="/chat" className="font-semibold text-sm leading-5 bg-black text-white p-2">
+      <Link
+        href="/chat"
+        className="font-semibold text-sm leading-5 bg-black text-white p-2"
+      >
         AIと壁打ち作成
       </Link>
     </header>
