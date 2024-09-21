@@ -7,8 +7,8 @@ export const Chat: FC = () => {
   const { data, mutate } = useGetConversationsList();
   if (!data) return null;
 
-  const conversation = data.data.conversation
-  const isCompleteChat = conversation.askCount >= 4
+  const conversation = data.data.conversation;
+  const isCompleteChat = conversation.askCount >= 4;
 
   return (
     <div>
@@ -21,7 +21,11 @@ export const Chat: FC = () => {
           />
         );
       })}
-      {isCompleteChat && <a href={`/api/v1/conversations/${conversation.id}/redirect-document`}>作成した記事を表示する</a>}
+      {isCompleteChat && (
+        <a href={`/api/v1/conversations/${conversation.id}/redirect-document`}>
+          作成した記事を表示する
+        </a>
+      )}
       <ChatInput disabled={isCompleteChat} updateChat={mutate} />
     </div>
   );
