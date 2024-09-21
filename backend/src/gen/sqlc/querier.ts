@@ -10,10 +10,10 @@ type Query<T> = {
   batch(): D1PreparedStatement;
 }
 const createConversationQuery = `-- name: createConversation :exec
-INSERT INTO Conversations (code) VALUES (?1)`;
+INSERT INTO Conversations (id) VALUES (?1)`;
 
 export type createConversationParams = {
-  code: string;
+  id: string;
 };
 
 export function createConversation(
@@ -22,7 +22,7 @@ export function createConversation(
 ): Query<D1Result> {
   const ps = d1
     .prepare(createConversationQuery)
-    .bind(args.code);
+    .bind(args.id);
   return {
     then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
       ps.run()
@@ -32,76 +32,26 @@ export function createConversation(
   }
 }
 
-const getConversationByCodeQuery = `-- name: getConversationByCode :one
-SELECT
-    id, code, created_at, updated_at
-FROM
-    Conversations
-WHERE
-    code = ?1`;
-
-export type getConversationByCodeParams = {
-  code: string;
-};
-
-export type getConversationByCodeRow = {
-  id: number;
-  code: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type RawgetConversationByCodeRow = {
-  id: number;
-  code: string;
-  created_at: string;
-  updated_at: string;
-};
-
-export function getConversationByCode(
-  d1: D1Database,
-  args: getConversationByCodeParams
-): Query<getConversationByCodeRow | null> {
-  const ps = d1
-    .prepare(getConversationByCodeQuery)
-    .bind(args.code);
-  return {
-    then(onFulfilled?: (value: getConversationByCodeRow | null) => void, onRejected?: (reason?: any) => void) {
-      ps.first<RawgetConversationByCodeRow | null>()
-        .then((raw: RawgetConversationByCodeRow | null) => raw ? {
-          id: raw.id,
-          code: raw.code,
-          createdAt: raw.created_at,
-          updatedAt: raw.updated_at,
-        } : null)
-        .then(onFulfilled).catch(onRejected);
-    },
-    batch() { return ps; },
-  }
-}
-
 const getConversationByIdQuery = `-- name: getConversationById :one
 SELECT
-    id, code, created_at, updated_at
+    id, created_at, updated_at
 FROM
     Conversations
 WHERE
     id = ?1`;
 
 export type getConversationByIdParams = {
-  id: number;
+  id: string;
 };
 
 export type getConversationByIdRow = {
-  id: number;
-  code: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetConversationByIdRow = {
-  id: number;
-  code: string;
+  id: string;
   created_at: string;
   updated_at: string;
 };
@@ -118,7 +68,6 @@ export function getConversationById(
       ps.first<RawgetConversationByIdRow | null>()
         .then((raw: RawgetConversationByIdRow | null) => raw ? {
           id: raw.id,
-          code: raw.code,
           createdAt: raw.created_at,
           updatedAt: raw.updated_at,
         } : null)
@@ -129,10 +78,11 @@ export function getConversationById(
 }
 
 const createMessageQuery = `-- name: createMessage :exec
-INSERT INTO Messages (conversation_id, sender, message) VALUES (?1, ?2, ?3)`;
+INSERT INTO Messages (id, conversation_id, sender, message) VALUES (?1, ?2, ?3, ?4)`;
 
 export type createMessageParams = {
-  conversationId: number;
+  id: string;
+  conversationId: string;
   sender: string;
   message: string;
 };
@@ -143,7 +93,7 @@ export function createMessage(
 ): Query<D1Result> {
   const ps = d1
     .prepare(createMessageQuery)
-    .bind(args.conversationId, args.sender, args.message);
+    .bind(args.id, args.conversationId, args.sender, args.message);
   return {
     then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
       ps.run()
@@ -155,32 +105,34 @@ export function createMessage(
 
 const getMessagesByConversationIdQuery = `-- name: getMessagesByConversationId :many
 SELECT
-    id, conversation_id, sender, message, created_at, updated_at
+    id, conversation_id, sender, message, send_at_unix_time, created_at, updated_at
 FROM
     Messages
 WHERE
     conversation_id = ?1
 ORDER BY
-    created_at DESC`;
+    send_at_unix_time asc`;
 
 export type getMessagesByConversationIdParams = {
-  conversationId: number;
+  conversationId: string;
 };
 
 export type getMessagesByConversationIdRow = {
-  id: number;
-  conversationId: number;
+  id: string;
+  conversationId: string;
   sender: string;
   message: string;
+  sendAtUnixTime: number | null;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetMessagesByConversationIdRow = {
-  id: number;
-  conversation_id: number;
+  id: string;
+  conversation_id: string;
   sender: string;
   message: string;
+  send_at_unix_time: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -202,6 +154,7 @@ export function getMessagesByConversationId(
             conversationId: raw.conversation_id,
             sender: raw.sender,
             message: raw.message,
+            sendAtUnixTime: raw.send_at_unix_time,
             createdAt: raw.created_at,
             updatedAt: raw.updated_at,
           }}),
@@ -212,59 +165,124 @@ export function getMessagesByConversationId(
   }
 }
 
-const getConversationMessagesQuery = `-- name: getConversationMessages :many
+const getDocumentsQuery = `-- name: getDocuments :many
 SELECT
-    id, conversation_id, sender, message, created_at, updated_at
+    id, conversation_id, content, created_at, updated_at
 FROM
-    Messages
-WHERE
-    conversation_id = ?1
+    Documents
 ORDER BY
     created_at DESC`;
 
-export type getConversationMessagesParams = {
-  conversationId: number;
-};
-
-export type getConversationMessagesRow = {
-  id: number;
-  conversationId: number;
-  sender: string;
-  message: string;
+export type getDocumentsRow = {
+  id: string;
+  conversationId: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
 };
 
-type RawgetConversationMessagesRow = {
-  id: number;
-  conversation_id: number;
-  sender: string;
-  message: string;
+type RawgetDocumentsRow = {
+  id: string;
+  conversation_id: string;
+  content: string;
   created_at: string;
   updated_at: string;
 };
 
-export function getConversationMessages(
-  d1: D1Database,
-  args: getConversationMessagesParams
-): Query<D1Result<getConversationMessagesRow>> {
+export function getDocuments(
+  d1: D1Database
+): Query<D1Result<getDocumentsRow>> {
   const ps = d1
-    .prepare(getConversationMessagesQuery)
-    .bind(args.conversationId);
+    .prepare(getDocumentsQuery);
   return {
-    then(onFulfilled?: (value: D1Result<getConversationMessagesRow>) => void, onRejected?: (reason?: any) => void) {
-      ps.all<RawgetConversationMessagesRow>()
-        .then((r: D1Result<RawgetConversationMessagesRow>) => { return {
+    then(onFulfilled?: (value: D1Result<getDocumentsRow>) => void, onRejected?: (reason?: any) => void) {
+      ps.all<RawgetDocumentsRow>()
+        .then((r: D1Result<RawgetDocumentsRow>) => { return {
           ...r,
-          results: r.results.map((raw: RawgetConversationMessagesRow) => { return {
+          results: r.results.map((raw: RawgetDocumentsRow) => { return {
             id: raw.id,
             conversationId: raw.conversation_id,
-            sender: raw.sender,
-            message: raw.message,
+            content: raw.content,
             createdAt: raw.created_at,
             updatedAt: raw.updated_at,
           }}),
         }})
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const createDocumentQuery = `-- name: createDocument :exec
+INSERT INTO Documents (id, conversation_id, content) VALUES (?1, ?2, ?3)`;
+
+export type createDocumentParams = {
+  id: string;
+  conversationId: string;
+  content: string;
+};
+
+export function createDocument(
+  d1: D1Database,
+  args: createDocumentParams
+): Query<D1Result> {
+  const ps = d1
+    .prepare(createDocumentQuery)
+    .bind(args.id, args.conversationId, args.content);
+  return {
+    then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
+      ps.run()
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const getDocumentByIdQuery = `-- name: getDocumentById :one
+SELECT
+    id, conversation_id, content, created_at, updated_at
+FROM
+    Documents
+WHERE
+    id = ?1`;
+
+export type getDocumentByIdParams = {
+  id: string;
+};
+
+export type getDocumentByIdRow = {
+  id: string;
+  conversationId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RawgetDocumentByIdRow = {
+  id: string;
+  conversation_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export function getDocumentById(
+  d1: D1Database,
+  args: getDocumentByIdParams
+): Query<getDocumentByIdRow | null> {
+  const ps = d1
+    .prepare(getDocumentByIdQuery)
+    .bind(args.id);
+  return {
+    then(onFulfilled?: (value: getDocumentByIdRow | null) => void, onRejected?: (reason?: any) => void) {
+      ps.first<RawgetDocumentByIdRow | null>()
+        .then((raw: RawgetDocumentByIdRow | null) => raw ? {
+          id: raw.id,
+          conversationId: raw.conversation_id,
+          content: raw.content,
+          createdAt: raw.created_at,
+          updatedAt: raw.updated_at,
+        } : null)
         .then(onFulfilled).catch(onRejected);
     },
     batch() { return ps; },
