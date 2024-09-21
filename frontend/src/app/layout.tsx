@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { PrelineScript } from "./_dependencies/PrelineScript";
 import "./globals.css";
+import { HeaderLayout } from "#/components/HeaderLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
+        <HeaderLayout />
         <main className="bg-slate-200">
           <div className="mx-auto max-w-md bg-slate-100 min-h-svh relative">
             {children}
