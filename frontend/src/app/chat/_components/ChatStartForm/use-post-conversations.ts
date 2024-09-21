@@ -27,6 +27,7 @@ export const usePostConversations = () => {
       router.push(`/chat/${data.conversation.id}`);
     } catch (error) {
       console.error("Error:", error);
+      throw new Error(String(error));
     } finally {
       setIsLoading(false);
     }

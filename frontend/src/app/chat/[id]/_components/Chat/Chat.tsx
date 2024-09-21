@@ -1,22 +1,24 @@
 "use client";
 import type { FC } from "react";
+import { ChatInput } from "../ChatInput";
 import { useGetConversationsList } from "./use-get-conversations-list";
 
 export const Chat: FC = () => {
-  const { data } = useGetConversationsList();
+  const { data, mutate } = useGetConversationsList();
   if (!data) return null;
 
   return (
     <div>
-      {data.data.messages.map(({ sender, message }) => {
+      {data.data.messages.map(({ sender, message, id }) => {
         return (
           <ChatItem
-            key={message}
+            key={id}
             position={sender === "user" ? "right" : "left"}
             message={message}
           />
         );
       })}
+      <ChatInput updateChat={mutate} />
     </div>
   );
 };
