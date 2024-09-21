@@ -15,7 +15,7 @@ const fetcher = async (
   });
   if (!res.ok) throw new Error(String(res.status));
   const data = await res.json();
-  return res.ok;
+  return data.data.conversation.askCount;
 };
 
 export const usePostChat = (updateChat: () => void) => {
@@ -30,15 +30,18 @@ export const usePostChat = (updateChat: () => void) => {
   const handleAction = useCallback(async () => {
     setIsLoading(true);
     try {
-      await trigger({ content: text, id });
-      router.push(`/articles/${id}`);
-      // updateChat();
+      const count = await trigger({ content: text, id });
+      if (count > 2) {
+        router.push(`/articles/${id}`);
+      } else {
+        updateChat();
+      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [trigger, text, id, router]);
+  }, [trigger, text, id, router, updateChat]);
 
   return {
     text,
