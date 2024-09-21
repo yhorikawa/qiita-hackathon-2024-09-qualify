@@ -3,6 +3,7 @@
   "scripts": {
     "migrate:local": "wrangler d1 execute DB --local --file=./db/schema.sql --env dev",
     "migrate:production": "wrangler d1 execute DB --file=./db/schema.sql --env production",
+    "seed:local": "wrangler d1 execute DB --local --file=./db/seed.sql --env dev",
     "generate:wrangler": "cp ./wrangler.example.toml ./wrangler.toml",
     "generate:sqlc": "sqlc generate",
     "dev": "wrangler dev src/index.ts --env dev",

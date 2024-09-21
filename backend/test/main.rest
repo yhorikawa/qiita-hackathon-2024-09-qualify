@@ -19,3 +19,7 @@ Content-Type: application/json
 {
   "message": "my message"
 }
+
+###
+GET {{host}}/api/v1/conversations/1
+Content-Type: application/json
