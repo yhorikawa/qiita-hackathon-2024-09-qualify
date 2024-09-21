@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className={inter.className}>
         <HeaderLayout />
-        <main className="bg-slate-200">
+        <main className="bg-violet-50">
           <div className="mx-auto max-w-md bg-slate-100 min-h-svh relative">
             {children}
           </div>
