@@ -191,6 +191,63 @@ const route = app
       c.status(201);
       return c.json(response);
     },
+  )
+
+  .post(
+    "/:id/create-document",
+    zValidator(
+      "param",
+      z.object({
+        id: z.string().uuid(),
+      }),
+    ),
+    async (c) => {
+      const { id } = await c.req.valid("param");
+
+      const conversation = await db.getConversationById(c.env.DB, { id });
+      if (!conversation) {
+        c.status(500);
+        return c.json({
+          success: false,
+          error: "Failed to create conversation",
+        });
+      }
+
+      const messages = await db.getMessagesByConversationId(c.env.DB, {
+        conversationId: conversation.id,
+      });
+      const messagelist = messages.results
+        .map((m) => {
+          return m.message;
+        })
+        .join("\n");
+
+      const gptRequestMessages = [
+        { role: "system", content: systemDocument },
+        {
+          role: "user",
+          content: messagelist,
+        },
+      ];
+      const response = await fetchChatGPTResponse(
+        c.env.OPENAI_API_KEY,
+        gptRequestMessages,
+      );
+
+      await db.createDocument(c.env.DB, {
+        id: crypto.randomUUID(),
+        conversationId: conversation.id,
+        content: response.choices[0].message.content,
+      });
+
+      c.status(201);
+      return c.json({
+        success: true,
+        data: {
+          ai_response: response.choices[0].message.content,
+        },
+      });
+    },
   );
 
 export default route;
@@ -202,4 +259,16 @@ const systemAskChat = `
   聞かれた内容を解釈して、気になる点を質問してください。
 
   回答するのは、質問文だけで良いです。
+`;
+
+const systemDocument = `
+  必ず日本語で答えてください。
+
+  あなたは、ドキュメントをまとめるプロです。
+  聞かれた内容を解釈して、マークダウンでドキュメントを作成してください。
+  ネットに公開するので、情報は慎重に。
+  ドキュメントはmax_completion_tokens: 300で収まる範囲で作成してください。
+  あと、マークダウンは、コードブロックではなく、ただの文字列としてください。
+
+  回答するのは、まとめたマークダウンのみで良いです。
 `;

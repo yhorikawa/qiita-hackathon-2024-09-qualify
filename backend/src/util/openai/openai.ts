@@ -21,7 +21,7 @@ export const fetchChatGPTResponse = (
   const body = {
     model: "gpt-4o",
     messages: messages,
-    max_completion_tokens: 50,
+    max_completion_tokens: 300,
   };
 
   return fetch(URL, {
