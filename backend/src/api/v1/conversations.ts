@@ -161,13 +161,17 @@ const route = app
       const { message } = await c.req.valid("json");
       const { id } = await c.req.valid("param");
 
+      const response: ConversationResponse = {
+        success: false,
+        data: { conversation: {} as model.Conversations },
+        error: [],
+      };
+
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
         c.status(500);
-        return c.json({
-          success: false,
-          error: "Failed to create conversation",
-        });
+        response.error.push("Conversation not found");
+        return c.json(response);
       }
 
       await db.createMessage(c.env.DB, {
@@ -183,7 +187,7 @@ const route = app
           content: message,
         },
       ];
-      const response = await fetchChatGPTResponse(
+      const chatGPTResponse = await fetchChatGPTResponse(
         c.env.OPENAI_API_KEY,
         messages,
       );
@@ -191,16 +195,13 @@ const route = app
       await db.createMessage(c.env.DB, {
         conversationId: conversation.id,
         sender: "ai",
-        message: response.choices[0].message.content,
+        message: chatGPTResponse.choices[0].message.content,
       });
+
+      response.success = true;
+      response.data.conversation = conversation;
       c.status(201);
-      return c.json({
-        success: true,
-        data: {
-          conversation_id: id,
-          ai_response: response.choices[0].message.content,
-        },
-      });
+      return c.json(response);
     },
   );
 
