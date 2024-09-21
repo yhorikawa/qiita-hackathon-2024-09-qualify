@@ -233,7 +233,6 @@ const route = app
 
   .post(
     "/:id/create-document",
-    zValidator("json", z.object({ message: z.string() })),
     zValidator(
       "param",
       z.object({
@@ -241,7 +240,6 @@ const route = app
       }),
     ),
     async (c) => {
-      const { message } = await c.req.valid("json");
       const { id } = await c.req.valid("param");
 
       const response: DocumentResponse = {
@@ -256,13 +254,6 @@ const route = app
         response.error.push("Failed to create conversation");
         return c.json(response);
       }
-
-      await db.createMessage(c.env.DB, {
-        id: crypto.randomUUID(),
-        conversationId: conversation.id,
-        sender: "user",
-        message,
-      });
 
       const messages = await db.getMessagesByConversationId(c.env.DB, {
         conversationId: conversation.id,
@@ -299,6 +290,13 @@ const route = app
         response.error.push("Failed to create document");
         return c.json(response);
       }
+
+      await db.createMessage(c.env.DB, {
+        id: crypto.randomUUID(),
+        conversationId: conversation.id,
+        sender: "ai",
+        message: "ドキュメントの作成が完了しました。",
+      });
 
       response.success = true;
       response.data.document = document;
