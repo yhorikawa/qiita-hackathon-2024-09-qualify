@@ -229,11 +229,8 @@ const route = app
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
         c.status(404);
-        return c.json({
-          success: false,
-          data: { conversation: {} },
-          error: "Failed to create conversation",
-        });
+        response.error.push("Failed to create conversation");
+        return c.json(response);
       }
 
       const messages = await db.getMessagesByConversationId(c.env.DB, {
@@ -268,11 +265,8 @@ const route = app
       const document = await db.getDocumentById(c.env.DB, { id: documentId });
       if (!document) {
         c.status(500);
-        return c.json({
-          success: false,
-          data: { document: {} },
-          error: "Failed to create document",
-        });
+        response.error.push("Failed to create document");
+        return c.json(response);
       }
 
       response.success = true;
