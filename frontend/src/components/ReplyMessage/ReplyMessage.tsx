@@ -18,7 +18,7 @@ export const ReplyMessage: FC<Props> = ({ message }) => {
           height={32}
           className="shrink-0 grow-0"
         />
-        <p>{message}</p>
+        <p className="max-w-[856px]">{message}</p>
       </div>
     </>
   );

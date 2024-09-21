@@ -30,11 +30,11 @@ const ChatItem: FC<{ position: "left" | "right"; message: string }> = ({
   message,
 }) => {
   return position === "right" ? (
-    <div style={{ textAlign: position }}>
+    <div className="ml-auto">
       <MessageBubble>{message}</MessageBubble>
     </div>
   ) : (
-    <div style={{ textAlign: position }}>
+    <div className="mr-auto">
       <ReplyMessage message={message} />
     </div>
   );
