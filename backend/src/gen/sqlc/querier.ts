@@ -321,3 +321,54 @@ export function getDocumentById(
   }
 }
 
+const getDocumentByConversationIdQuery = `-- name: getDocumentByConversationId :one
+SELECT
+    id, conversation_id, content, created_at, updated_at
+FROM
+    Documents
+WHERE
+    conversation_id = ?1`;
+
+export type getDocumentByConversationIdParams = {
+  conversationId: string;
+};
+
+export type getDocumentByConversationIdRow = {
+  id: string;
+  conversationId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RawgetDocumentByConversationIdRow = {
+  id: string;
+  conversation_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export function getDocumentByConversationId(
+  d1: D1Database,
+  args: getDocumentByConversationIdParams
+): Query<getDocumentByConversationIdRow | null> {
+  const ps = d1
+    .prepare(getDocumentByConversationIdQuery)
+    .bind(args.conversationId);
+  return {
+    then(onFulfilled?: (value: getDocumentByConversationIdRow | null) => void, onRejected?: (reason?: any) => void) {
+      ps.first<RawgetDocumentByConversationIdRow | null>()
+        .then((raw: RawgetDocumentByConversationIdRow | null) => raw ? {
+          id: raw.id,
+          conversationId: raw.conversation_id,
+          content: raw.content,
+          createdAt: raw.created_at,
+          updatedAt: raw.updated_at,
+        } : null)
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+

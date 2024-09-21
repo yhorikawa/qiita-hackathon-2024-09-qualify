@@ -48,3 +48,11 @@ FROM
     Documents
 WHERE
     id = @id;
+
+-- name: getDocumentByConversationId :one
+SELECT
+    *
+FROM
+    Documents
+WHERE
+    conversation_id = @conversation_id;
