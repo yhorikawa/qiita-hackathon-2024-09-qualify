@@ -206,16 +206,25 @@ const route = app
         return c.json(response);
       }
 
-      const messages = [
+      const messages = await db.getMessagesByConversationId(c.env.DB, {
+        conversationId: conversation.id,
+      });
+      const messagelist = messages.results
+        .map((m) => {
+          return m.message;
+        })
+        .join("\n");
+
+      const gptRequestMessages = [
         { role: "system", content: systemAskChat },
         {
           role: "user",
-          content: message,
+          content: messagelist,
         },
       ];
       const chatGPTResponse = await fetchChatGPTResponse(
         c.env.OPENAI_API_KEY,
-        messages,
+        gptRequestMessages,
       );
 
       await db.createMessage(c.env.DB, {
