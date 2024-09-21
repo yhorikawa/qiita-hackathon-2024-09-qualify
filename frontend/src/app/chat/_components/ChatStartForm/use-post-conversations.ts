@@ -1,0 +1,45 @@
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import useSWRMutation from "swr/mutation";
+import { client } from "#/lib/client";
+
+const fetcher = async (_url: string, { arg }: { arg: { content: string } }) => {
+  const res = await client.api.v1.conversations.start.$post({
+    json: {
+      message: arg.content,
+    },
+  });
+  if (!res.ok) throw new Error(String(res.status));
+  return res.ok;
+};
+
+export const usePostConversations = () => {
+  const router = useRouter();
+  const onSuccess = useCallback(() => {
+    router.push("/");
+  }, [router]);
+  const { trigger } = useSWRMutation("postConvasations", fetcher, {
+    onSuccess,
+  });
+
+  const [text, setText] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleAction = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await trigger({ content: text });
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [trigger, text]);
+
+  return {
+    text,
+    setText,
+    handleAction,
+    isLoading,
+  };
+};
