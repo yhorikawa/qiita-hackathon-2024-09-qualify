@@ -8,26 +8,27 @@ export const ChatStartForm: FC = () => {
   const { text, setText, handleAction, isLoading } = usePostConversations();
   return (
     <>
-      <div className="flex">
+      <div>
         <TextareaAutosize
           id={textareaId}
           value={text}
           onInput={(e) => setText(e.currentTarget.value)}
-          className=" py-3 px-4 block w-full border-gray-200 rounded-lg text-sm"
+          className="py-6 px-4 block w-full border-gray-200 rounded-lg text-sm"
           minRows={30}
           cacheMeasurements={true}
           placeholder="AIに壁打ちしてもらうための骨子を入力しましょう"
           disabled={isLoading}
         />
       </div>
-      <div className="fleo flex-row-reverse">
+      <div className="text-right mt-4">
+        {/** TODO:後で時間があったらコンポーネントに置き換える */}
         <button
           onClick={handleAction}
           type="button"
           disabled={isLoading}
-          className="bg-black text-white p-3"
+          className="text-white rounded-md py-2 px-4 bg-violet-800 hover:bg-violet-600 focus:bg-violet-600 focus:outline-offset-[3px]"
         >
-          壁打ちスタート
+          AIアシスト開始
         </button>
       </div>
     </>

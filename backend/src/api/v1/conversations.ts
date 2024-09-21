@@ -30,6 +30,12 @@ interface MessageResponse {
   error: string[];
 }
 
+interface DocumentResponse {
+  success: boolean;
+  data: { document: model.Documents };
+  error: string[];
+}
+
 const app = new Hono<{ Bindings: Bindings }>();
 const route = app
   .get(
@@ -165,7 +171,7 @@ const route = app
 
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
-        c.status(500);
+        c.status(404);
         response.error.push("Conversation not found");
         return c.json(response);
       }
@@ -214,9 +220,15 @@ const route = app
     async (c) => {
       const { id } = await c.req.valid("param");
 
+      const response: DocumentResponse = {
+        success: false,
+        data: { document: {} as model.Documents },
+        error: [],
+      };
+
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
-        c.status(500);
+        c.status(404);
         return c.json({
           success: false,
           error: "Failed to create conversation",
@@ -239,24 +251,32 @@ const route = app
           content: messagelist,
         },
       ];
-      const response = await fetchChatGPTResponse(
+      const chatGPTResponse = await fetchChatGPTResponse(
         c.env.OPENAI_API_KEY,
         gptRequestMessages,
       );
 
+      const documentId = crypto.randomUUID();
+
       await db.createDocument(c.env.DB, {
-        id: crypto.randomUUID(),
+        id: documentId,
         conversationId: conversation.id,
-        content: response.choices[0].message.content,
+        content: chatGPTResponse.choices[0].message.content,
       });
 
+      const document = await db.getDocumentById(c.env.DB, { id: documentId });
+      if (!document) {
+        c.status(500);
+        return c.json({
+          success: false,
+          error: "Failed to create document",
+        });
+      }
+
+      response.success = true;
+      response.data.document = document;
       c.status(201);
-      return c.json({
-        success: true,
-        data: {
-          ai_response: response.choices[0].message.content,
-        },
-      });
+      return c.json(response);
     },
   );
 
