@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
 import * as db from "../../gen/sqlc/querier";
+import { fetchChatGPTResponse } from "../../util/openai";
 import type { Bindings } from "./index";
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -118,12 +119,56 @@ const route = app
       const { message } = await c.req.valid("json");
       const { id } = await c.req.valid("param");
 
+      const conversation = await db.getConversationById(c.env.DB, { id });
+      if (!conversation) {
+        c.status(500);
+        return c.json({
+          success: false,
+          error: "Failed to create conversation",
+        });
+      }
+
+      await db.createMessage(c.env.DB, {
+        conversationId: conversation.id,
+        sender: "user",
+        message,
+      });
+
+      const messages = [
+        { role: "system", content: systemAskChat },
+        {
+          role: "user",
+          content: message,
+        },
+      ];
+      const response = await fetchChatGPTResponse(
+        c.env.OPENAI_API_KEY,
+        messages,
+      );
+
+      await db.createMessage(c.env.DB, {
+        conversationId: conversation.id,
+        sender: "ai",
+        message: response.choices[0].message.content,
+      });
       c.status(201);
       return c.json({
         success: true,
-        data: { conversation_id: id, ai_response: message },
+        data: {
+          conversation_id: id,
+          ai_response: response.choices[0].message.content,
+        },
       });
     },
   );
 
 export default route;
+const systemAskChat = `
+  必ず日本語で答えてください。
+
+  あなたは、ドキュメントをまとめるプロです。
+  現在ユーザーはドキュメントをまとめるために、質問をしています。
+  聞かれた内容を解釈して、気になる点を質問してください。
+
+  回答するのは、質問文だけで良いです。
+`;

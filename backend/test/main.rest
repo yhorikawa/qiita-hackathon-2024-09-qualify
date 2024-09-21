@@ -17,7 +17,7 @@ POST {{host}}/api/v1/conversations/1/ask
 Content-Type: application/json
 
 {
-  "message": "my message"
+  "message": "認証APIを実装する記事を作りたい。"
 }
 
 ###

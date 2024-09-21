@@ -4,6 +4,7 @@ import conversationsApi from "./conversations";
 
 export type Bindings = {
   DB: D1Database;
+  OPENAI_API_KEY: string;
 };
 
 const api = new Hono<{ Bindings: Bindings }>()
