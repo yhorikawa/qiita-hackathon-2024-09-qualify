@@ -8,11 +8,9 @@ type PageProps = {
 };
 
 const Page: NextPage<PageProps> = async ({ params: { id } }) => {
-  const res = await client.api.v1.documents[":id"].$get(
-    {
-      param: { id },
-    },
-  );
+  const res = await client.api.v1.documents[":id"].$get({
+    param: { id },
+  });
   if (!res.ok) return notFound();
   const data = await res.json();
   const document = data.data.document.content;

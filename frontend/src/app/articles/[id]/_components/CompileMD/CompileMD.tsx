@@ -1,18 +1,17 @@
-import { compileMDX } from 'next-mdx-remote/rsc'
-import type { FC } from 'react'
-
+import { compileMDX } from "next-mdx-remote/rsc";
+import type { FC } from "react";
 
 export const CompileMD: FC<{ md: string }> = async ({ md }) => {
   const { content } = await compileMDX({
     source: md,
     components: {
       h1: ({ children }) => (
-        <h1 className='text-text-high/text-high mt-8 mb-4 px-2 py-4 text-3xl font-bold leading-normal border-brand-500 border-t-4 border-solid'>
+        <h1 className="text-text-high/text-high mt-8 mb-4 px-2 py-4 text-3xl font-bold leading-normal border-brand-500 border-t-4 border-solid">
           {children}
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 className='text-text-high/text-high mt-8 mb-8 px-2 pt-2 pb-2 text-3xl font-bold border-brand-500 border-b-2 border-solid leading-normal'>
+        <h2 className="text-text-high/text-high mt-8 mb-8 px-2 pt-2 pb-2 text-3xl font-bold border-brand-500 border-b-2 border-solid leading-normal">
           {children}
         </h2>
       ),
@@ -26,13 +25,32 @@ export const CompileMD: FC<{ md: string }> = async ({ md }) => {
           {children}
         </h4>
       ),
-      ul: ({ children }) => (<ul className='mx-4 pl-7 list-disc text-base flex flex-col gap-3 leading-normal'>{children}</ul>),
-      li: ({ children }) => (<li className='font-light text-text-high/text-high'>{children}</li>),
-      p: ({ children }) => (<p className='mt-4 mb-6 text-base font-light text-text-high/text-high leading-normal'>{children}</p>),
-      a: ({ children, ...props }) => (<a className='text-text-high/text-high text-base hover:text-text-medium/text-medium hover:underline visited:text-text-disabled/text-disabled' {...props}>{children}</a>),
-      hr: () => (<hr className='my-8' />),
-      strong: ({ children }) => (<strong className='font-bold'>{children}</strong>),
-    }
-  })
-  return content
-}
+      ul: ({ children }) => (
+        <ul className="mx-4 pl-7 list-disc text-base flex flex-col gap-3 leading-normal">
+          {children}
+        </ul>
+      ),
+      li: ({ children }) => (
+        <li className="font-light text-text-high/text-high">{children}</li>
+      ),
+      p: ({ children }) => (
+        <p className="mt-4 mb-6 text-base font-light text-text-high/text-high leading-normal">
+          {children}
+        </p>
+      ),
+      a: ({ children, ...props }) => (
+        <a
+          className="text-text-high/text-high text-base hover:text-text-medium/text-medium hover:underline visited:text-text-disabled/text-disabled"
+          {...props}
+        >
+          {children}
+        </a>
+      ),
+      hr: () => <hr className="my-8" />,
+      strong: ({ children }) => (
+        <strong className="font-bold">{children}</strong>
+      ),
+    },
+  });
+  return content;
+};
