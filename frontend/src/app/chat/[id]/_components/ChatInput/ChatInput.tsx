@@ -6,5 +6,5 @@ export const ChatInput: FC = () => {
       <input type="text" placeholder="ぷれーすほるだぁ" />
       <button type="button">✈</button>
     </>
-  )
-}
+  );
+};
