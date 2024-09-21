@@ -19,10 +19,11 @@ const fetcher = async (
 };
 
 export const usePostChat = (updateChat: () => void) => {
-  const router = useRouter();
   const params = useParams<{ id: string }>();
   const { id } = params;
-  const { trigger } = useSWRMutation("postChat", fetcher);
+  const { trigger } = useSWRMutation("postChat", fetcher, {
+    onSuccess: () => updateChat(),
+  });
 
   const [text, setText] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,13 +37,12 @@ export const usePostChat = (updateChat: () => void) => {
           param: { id },
         });
       }
-      updateChat();
     } catch (error) {
       console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [trigger, text, id, updateChat]);
+  }, [trigger, text, id]);
 
   return {
     text,
