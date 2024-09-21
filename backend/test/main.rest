@@ -4,7 +4,7 @@
 GET {{host}}/api/v1
 
 ###
-POST {{host}}/api/v1/ai/conversations/start
+POST {{host}}/api/v1/conversations/start
 Content-Type: application/json
 
 {

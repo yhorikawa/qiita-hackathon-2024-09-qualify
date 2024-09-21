@@ -4,8 +4,8 @@ import { z } from "zod";
 import type { Bindings } from "./index";
 
 const app = new Hono<{ Bindings: Bindings }>();
-app.post(
-  "/conversations/start",
+const route = app.post(
+  "/start",
   zValidator("json", z.object({ message: z.string() })),
   async (c) => {
     const { message } = await c.req.valid("json");
@@ -18,4 +18,4 @@ app.post(
   },
 );
 
-export default app;
+export default route;
