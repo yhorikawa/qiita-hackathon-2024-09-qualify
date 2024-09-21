@@ -38,7 +38,7 @@ export const usePostChat = (updateChat: () => void) => {
     } finally {
       setIsLoading(false);
     }
-  }, [trigger, text, id, updateChat, router]);
+  }, [trigger, text, id, router]);
 
   return {
     text,
