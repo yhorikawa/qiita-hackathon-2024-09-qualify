@@ -1,13 +1,5 @@
 -- name: createConversation :exec
-INSERT INTO Conversations (code) VALUES (@code);
-
--- name: getConversationByCode :one
-SELECT
-    *
-FROM
-    Conversations
-WHERE
-    code = @code;
+INSERT INTO Conversations (id) VALUES (@id);
 
 -- name: getConversationById :one
 SELECT
@@ -18,7 +10,15 @@ WHERE
     id = @id;
 
 -- name: createMessage :exec
-INSERT INTO Messages (conversation_id, sender, message) VALUES (@conversation_id, @sender, @message);
+INSERT INTO Messages (id, conversation_id, sender, message) VALUES (@id, @conversation_id, @sender, @message);
+
+-- name: updateConversationAskCount :exec
+UPDATE
+    Conversations
+SET
+    ask_count = @ask_count
+WHERE
+    id = @id;
 
 -- name: getMessagesByConversationId :many
 SELECT
@@ -28,14 +28,23 @@ FROM
 WHERE
     conversation_id = @conversation_id
 ORDER BY
-    created_at DESC;
+    send_at_unix_time asc;
 
--- name: getConversationMessages :many
+-- name: getDocuments :many
 SELECT
     *
 FROM
-    Messages
-WHERE
-    conversation_id = @conversation_id
+    Documents
 ORDER BY
     created_at DESC;
+
+-- name: createDocument :exec
+INSERT INTO Documents (id, conversation_id, content) VALUES (@id, @conversation_id, @content);
+
+-- name: getDocumentById :one
+SELECT
+    *
+FROM
+    Documents
+WHERE
+    id = @id;

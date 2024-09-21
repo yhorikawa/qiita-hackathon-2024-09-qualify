@@ -10,17 +10,12 @@ const fetcher = async (_url: string, { arg }: { arg: { content: string } }) => {
     },
   });
   if (!res.ok) throw new Error(String(res.status));
-  return res.ok;
+  return res.json();
 };
 
 export const usePostConversations = () => {
   const router = useRouter();
-  const onSuccess = useCallback(() => {
-    router.push("/");
-  }, [router]);
-  const { trigger } = useSWRMutation("postConvasations", fetcher, {
-    onSuccess,
-  });
+  const { trigger } = useSWRMutation("postConvasations", fetcher);
 
   const [text, setText] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +23,15 @@ export const usePostConversations = () => {
   const handleAction = useCallback(async () => {
     setIsLoading(true);
     try {
-      await trigger({ content: text });
+      const { data } = await trigger({ content: text });
+      router.push(`/chat/${data.conversation.id}`);
     } catch (error) {
       console.error("Error:", error);
+      throw new Error(String(error));
     } finally {
       setIsLoading(false);
     }
-  }, [trigger, text]);
+  }, [trigger, text, router]);
 
   return {
     text,
