@@ -24,7 +24,7 @@ export const usePostConversations = () => {
     setIsLoading(true);
     try {
       const { data } = await trigger({ content: text });
-      router.push(`/chat/${data.conversation_id}`);
+      router.push(`/chat/${data.conversation.id}`);
     } catch (error) {
       console.error("Error:", error);
     } finally {
