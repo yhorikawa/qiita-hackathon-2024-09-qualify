@@ -1,7 +1,6 @@
 "use client";
 import { type FC, useId } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { ReplyMessage } from "#/components/ReplyMessage";
 import { usePostConversations } from "./use-post-conversations";
 
 export const ChatStartForm: FC = () => {
@@ -31,7 +30,6 @@ export const ChatStartForm: FC = () => {
           壁打ちスタート
         </button>
       </div>
-      <ReplyMessage message="AIが壁打ちを開始しました。" conversationId="1" />
     </>
   );
 };
