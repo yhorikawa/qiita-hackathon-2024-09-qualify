@@ -34,7 +34,7 @@ export function createConversation(
 
 const getConversationByIdQuery = `-- name: getConversationById :one
 SELECT
-    id, created_at, updated_at
+    id, ask_count, created_at, updated_at
 FROM
     Conversations
 WHERE
@@ -46,12 +46,14 @@ export type getConversationByIdParams = {
 
 export type getConversationByIdRow = {
   id: string;
+  askCount: number;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetConversationByIdRow = {
   id: string;
+  ask_count: number;
   created_at: string;
   updated_at: string;
 };
@@ -68,6 +70,7 @@ export function getConversationById(
       ps.first<RawgetConversationByIdRow | null>()
         .then((raw: RawgetConversationByIdRow | null) => raw ? {
           id: raw.id,
+          askCount: raw.ask_count,
           createdAt: raw.created_at,
           updatedAt: raw.updated_at,
         } : null)
@@ -94,6 +97,35 @@ export function createMessage(
   const ps = d1
     .prepare(createMessageQuery)
     .bind(args.id, args.conversationId, args.sender, args.message);
+  return {
+    then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
+      ps.run()
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const updateConversationAskCountQuery = `-- name: updateConversationAskCount :exec
+UPDATE
+    Conversations
+SET
+    ask_count = ?1
+WHERE
+    id = ?2`;
+
+export type updateConversationAskCountParams = {
+  askCount: number;
+  id: string;
+};
+
+export function updateConversationAskCount(
+  d1: D1Database,
+  args: updateConversationAskCountParams
+): Query<D1Result> {
+  const ps = d1
+    .prepare(updateConversationAskCountQuery)
+    .bind(args.askCount, args.id);
   return {
     then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
       ps.run()
