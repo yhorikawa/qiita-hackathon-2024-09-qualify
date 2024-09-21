@@ -32,6 +32,102 @@ export function createConversation(
   }
 }
 
+const getConversationByCodeQuery = `-- name: getConversationByCode :one
+SELECT
+    id, code, created_at, updated_at
+FROM
+    Conversations
+WHERE
+    code = ?1`;
+
+export type getConversationByCodeParams = {
+  code: string;
+};
+
+export type getConversationByCodeRow = {
+  id: number;
+  code: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RawgetConversationByCodeRow = {
+  id: number;
+  code: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export function getConversationByCode(
+  d1: D1Database,
+  args: getConversationByCodeParams
+): Query<getConversationByCodeRow | null> {
+  const ps = d1
+    .prepare(getConversationByCodeQuery)
+    .bind(args.code);
+  return {
+    then(onFulfilled?: (value: getConversationByCodeRow | null) => void, onRejected?: (reason?: any) => void) {
+      ps.first<RawgetConversationByCodeRow | null>()
+        .then((raw: RawgetConversationByCodeRow | null) => raw ? {
+          id: raw.id,
+          code: raw.code,
+          createdAt: raw.created_at,
+          updatedAt: raw.updated_at,
+        } : null)
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const getConversationByIdQuery = `-- name: getConversationById :one
+SELECT
+    id, code, created_at, updated_at
+FROM
+    Conversations
+WHERE
+    id = ?1`;
+
+export type getConversationByIdParams = {
+  id: number;
+};
+
+export type getConversationByIdRow = {
+  id: number;
+  code: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RawgetConversationByIdRow = {
+  id: number;
+  code: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export function getConversationById(
+  d1: D1Database,
+  args: getConversationByIdParams
+): Query<getConversationByIdRow | null> {
+  const ps = d1
+    .prepare(getConversationByIdQuery)
+    .bind(args.id);
+  return {
+    then(onFulfilled?: (value: getConversationByIdRow | null) => void, onRejected?: (reason?: any) => void) {
+      ps.first<RawgetConversationByIdRow | null>()
+        .then((raw: RawgetConversationByIdRow | null) => raw ? {
+          id: raw.id,
+          code: raw.code,
+          createdAt: raw.created_at,
+          updatedAt: raw.updated_at,
+        } : null)
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
 const createMessageQuery = `-- name: createMessage :exec
 INSERT INTO Messages (conversation_id, sender, message) VALUES (?1, ?2, ?3)`;
 
