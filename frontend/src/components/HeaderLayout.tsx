@@ -25,13 +25,13 @@ export const HeaderLayout = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex gap-2">
+            <DropdownMenuItem className="flex gap-2 focus:bg-violet-50 fover:bg-violet-50">
               <Link href="/new" className="text-base leading-relaxed">
                 新規作成
               </Link>
               <ChevronRight className="ml-auto h-6 w-6 opacity-60" />
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex gap-2">
+            <DropdownMenuItem className="flex gap-2 focus:bg-violet-50 fover:bg-violet-50">
               <Link href="/chat" className="text-base leading-relaxed">
                 AIと壁打ち作成
               </Link>
