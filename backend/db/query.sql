@@ -39,3 +39,22 @@ WHERE
     conversation_id = @conversation_id
 ORDER BY
     created_at DESC;
+
+-- name: getDocuments :many
+SELECT
+    *
+FROM
+    Documents
+ORDER BY
+    created_at DESC;
+
+-- name: createDocument :exec
+INSERT INTO Documents (conversation_id, content) VALUES (@conversation_id, @content);
+
+-- name: getDocumentById :one
+SELECT
+    *
+FROM
+    Documents
+WHERE
+    id = @id;
