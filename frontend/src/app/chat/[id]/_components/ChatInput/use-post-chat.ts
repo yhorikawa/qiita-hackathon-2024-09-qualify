@@ -14,18 +14,15 @@ const fetcher = async (
     },
   });
   if (!res.ok) throw new Error(String(res.status));
+  const data = await res.json();
   return res.ok;
 };
 
 export const usePostChat = (updateChat: () => void) => {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const { id } = params;
-  const onSuccess = useCallback(() => {
-    updateChat();
-  }, [updateChat]);
-  const { trigger } = useSWRMutation("postChat", fetcher, {
-    onSuccess,
-  });
+  const { trigger } = useSWRMutation("postChat", fetcher);
 
   const [text, setText] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,12 +31,14 @@ export const usePostChat = (updateChat: () => void) => {
     setIsLoading(true);
     try {
       await trigger({ content: text, id });
+      router.push(`/articles/${id}`);
+      // updateChat();
     } catch (error) {
       console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [trigger, text, id]);
+  }, [trigger, text, id, updateChat, router]);
 
   return {
     text,
