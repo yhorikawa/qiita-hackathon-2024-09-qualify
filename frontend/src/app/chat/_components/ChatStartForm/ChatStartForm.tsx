@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { type FC, useId } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { usePostConversations } from "./use-post-conversations";
@@ -21,8 +21,15 @@ export const ChatStartForm: FC = () => {
         />
       </div>
       <div className="fleo flex-row-reverse">
-        <button onClick={handleAction} type="button" disabled={isLoading} className="bg-black text-white p-3">壁打ちスタート</button>
+        <button
+          onClick={handleAction}
+          type="button"
+          disabled={isLoading}
+          className="bg-black text-white p-3"
+        >
+          壁打ちスタート
+        </button>
       </div>
     </>
-  )
-}
+  );
+};

@@ -2,10 +2,7 @@ import type { NextPage } from "next";
 import { ChatStartForm } from "./_components";
 
 const Page: NextPage = async () => {
-
-  return (
-    <ChatStartForm />
-  );
+  return <ChatStartForm />;
 };
 
 export default Page;
