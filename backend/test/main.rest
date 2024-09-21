@@ -10,3 +10,12 @@ Content-Type: application/json
 {
   "message": "my message"
 }
+
+###
+
+POST {{host}}/api/v1/conversations/1/ask
+Content-Type: application/json
+
+{
+  "message": "my message"
+}
