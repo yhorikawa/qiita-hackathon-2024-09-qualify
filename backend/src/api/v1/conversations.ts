@@ -25,6 +25,33 @@ const route = app
         return c.json({ success: false, error: "Conversation not found" });
       }
 
+      c.status(200);
+      return c.json({
+        success: true,
+        data: { conversation },
+      });
+    },
+  )
+
+  .get(
+    "/:id/messages",
+    zValidator(
+      "param",
+      z.object({
+        id: z
+          .string()
+          .transform((v) => Number.parseInt(v))
+          .refine((v) => !Number.isNaN(v), { message: "not a number" }),
+      }),
+    ),
+    async (c) => {
+      const { id } = await c.req.valid("param");
+      const conversation = await db.getConversationById(c.env.DB, { id });
+      if (!conversation) {
+        c.status(404);
+        return c.json({ success: false, error: "Conversation not found" });
+      }
+
       const messages = await db.getMessagesByConversationId(c.env.DB, {
         conversationId: conversation.id,
       });
@@ -32,7 +59,7 @@ const route = app
       c.status(200);
       return c.json({
         success: true,
-        data: { conversation, messages: messages.results },
+        data: { messages: messages.results },
       });
     },
   )
