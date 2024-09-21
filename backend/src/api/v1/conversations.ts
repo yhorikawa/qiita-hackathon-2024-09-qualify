@@ -30,6 +30,12 @@ interface MessageResponse {
   error: string[];
 }
 
+interface AskResponse {
+  success: boolean;
+  data: { conversation: model.Conversations };
+  error: string[];
+}
+
 const app = new Hono<{ Bindings: Bindings }>();
 const route = app
   .get(
@@ -157,7 +163,7 @@ const route = app
       const { message } = await c.req.valid("json");
       const { id } = await c.req.valid("param");
 
-      const response: ConversationResponse = {
+      const response: AskResponse = {
         success: false,
         data: { conversation: {} as model.Conversations },
         error: [],
@@ -165,7 +171,7 @@ const route = app
 
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
-        c.status(500);
+        c.status(404);
         response.error.push("Conversation not found");
         return c.json(response);
       }
