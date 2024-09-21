@@ -8,7 +8,7 @@ POST {{host}}/api/v1/conversations/start
 Content-Type: application/json
 
 {
-  "message": "my message"
+  "message": "初心者にもわかりやすい、RailsのAPI実装記事を作りたい。"
 }
 
 ###
