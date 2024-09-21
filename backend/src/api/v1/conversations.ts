@@ -228,7 +228,7 @@ const route = app
 
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
-        c.status(500);
+        c.status(404);
         response.error.push("Failed to create conversation");
         return c.json(response);
       }
