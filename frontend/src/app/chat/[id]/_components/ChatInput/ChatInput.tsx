@@ -2,8 +2,8 @@
 import type { FC } from "react";
 import { usePostChat } from "./use-post-chat";
 
-export const ChatInput: FC = () => {
-  const { text, setText, handleAction, isLoading } = usePostChat();
+export const ChatInput: FC<{ updateChat: () => void }> = ({ updateChat }) => {
+  const { text, setText, handleAction, isLoading } = usePostChat(updateChat);
   return (
     <>
       <input

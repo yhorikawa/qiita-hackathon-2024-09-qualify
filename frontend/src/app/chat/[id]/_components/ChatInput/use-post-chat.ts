@@ -17,13 +17,12 @@ const fetcher = async (
   return res.ok;
 };
 
-export const usePostChat = () => {
-  const router = useRouter();
+export const usePostChat = (updateChat: () => void) => {
   const params = useParams<{ id: string }>();
   const { id } = params;
   const onSuccess = useCallback(() => {
-    router.push("/");
-  }, [router]);
+    updateChat();
+  }, [updateChat]);
   const { trigger } = useSWRMutation("postChat", fetcher, {
     onSuccess,
   });
