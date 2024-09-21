@@ -135,12 +135,22 @@ const route = app
         message,
       });
 
-      const aiResponse = "Hello! How can I help you today?";
+      const messages = [
+        { role: "system", content: systemStartChat },
+        {
+          role: "user",
+          content: message,
+        },
+      ];
+      const chatGPTResponse = await fetchChatGPTResponse(
+        c.env.OPENAI_API_KEY,
+        messages,
+      );
       await db.createMessage(c.env.DB, {
         id: crypto.randomUUID(),
         conversationId,
         sender: "ai",
-        message: aiResponse,
+        message: chatGPTResponse.choices[0].message.content,
       });
 
       response.success = true;
@@ -277,6 +287,16 @@ const route = app
   );
 
 export default route;
+const systemStartChat = `
+  必ず日本語で答えてください。
+
+  あなたは、ドキュメントをまとめるプロです。
+  現在ユーザーはドキュメントをまとめるために、骨組みを送ります。
+  聞かれた内容を解釈して、気になる点を質問してください。
+
+  回答するのは、質問文だけで良いです。
+`;
+
 const systemAskChat = `
   必ず日本語で答えてください。
 
