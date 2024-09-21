@@ -7,4 +7,6 @@ INSERT INTO Conversations(code)VALUES('1c0c86d6-ea23-418f-9a45-d67cbd073b3b');
 INSERT INTO Messages(conversation_id,sender,message)VALUES(LAST_INSERT_ROWID(),'user','Hello, world!');
 INSERT INTO Messages(conversation_id,sender,message)VALUES(LAST_INSERT_ROWID(),'ai','Hello, user!');
 
+INSERT INTO Documents(conversation_id,content)VALUES(LAST_INSERT_ROWID(),'Hello, world!');
+
 COMMIT;

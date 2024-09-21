@@ -161,7 +161,7 @@ FROM
 WHERE
     conversation_id = ?1
 ORDER BY
-    created_at DESC`;
+    created_at asc, id asc`;
 
 export type getMessagesByConversationIdParams = {
   conversationId: number;
@@ -212,59 +212,123 @@ export function getMessagesByConversationId(
   }
 }
 
-const getConversationMessagesQuery = `-- name: getConversationMessages :many
+const getDocumentsQuery = `-- name: getDocuments :many
 SELECT
-    id, conversation_id, sender, message, created_at, updated_at
+    id, conversation_id, content, created_at, updated_at
 FROM
-    Messages
-WHERE
-    conversation_id = ?1
+    Documents
 ORDER BY
-    created_at DESC`;
+    created_at DESC, id DESC`;
 
-export type getConversationMessagesParams = {
-  conversationId: number;
-};
-
-export type getConversationMessagesRow = {
+export type getDocumentsRow = {
   id: number;
   conversationId: number;
-  sender: string;
-  message: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
 };
 
-type RawgetConversationMessagesRow = {
+type RawgetDocumentsRow = {
   id: number;
   conversation_id: number;
-  sender: string;
-  message: string;
+  content: string;
   created_at: string;
   updated_at: string;
 };
 
-export function getConversationMessages(
-  d1: D1Database,
-  args: getConversationMessagesParams
-): Query<D1Result<getConversationMessagesRow>> {
+export function getDocuments(
+  d1: D1Database
+): Query<D1Result<getDocumentsRow>> {
   const ps = d1
-    .prepare(getConversationMessagesQuery)
-    .bind(args.conversationId);
+    .prepare(getDocumentsQuery);
   return {
-    then(onFulfilled?: (value: D1Result<getConversationMessagesRow>) => void, onRejected?: (reason?: any) => void) {
-      ps.all<RawgetConversationMessagesRow>()
-        .then((r: D1Result<RawgetConversationMessagesRow>) => { return {
+    then(onFulfilled?: (value: D1Result<getDocumentsRow>) => void, onRejected?: (reason?: any) => void) {
+      ps.all<RawgetDocumentsRow>()
+        .then((r: D1Result<RawgetDocumentsRow>) => { return {
           ...r,
-          results: r.results.map((raw: RawgetConversationMessagesRow) => { return {
+          results: r.results.map((raw: RawgetDocumentsRow) => { return {
             id: raw.id,
             conversationId: raw.conversation_id,
-            sender: raw.sender,
-            message: raw.message,
+            content: raw.content,
             createdAt: raw.created_at,
             updatedAt: raw.updated_at,
           }}),
         }})
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const createDocumentQuery = `-- name: createDocument :exec
+INSERT INTO Documents (conversation_id, content) VALUES (?1, ?2)`;
+
+export type createDocumentParams = {
+  conversationId: number;
+  content: string;
+};
+
+export function createDocument(
+  d1: D1Database,
+  args: createDocumentParams
+): Query<D1Result> {
+  const ps = d1
+    .prepare(createDocumentQuery)
+    .bind(args.conversationId, args.content);
+  return {
+    then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
+      ps.run()
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const getDocumentByIdQuery = `-- name: getDocumentById :one
+SELECT
+    id, conversation_id, content, created_at, updated_at
+FROM
+    Documents
+WHERE
+    id = ?1`;
+
+export type getDocumentByIdParams = {
+  id: number;
+};
+
+export type getDocumentByIdRow = {
+  id: number;
+  conversationId: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RawgetDocumentByIdRow = {
+  id: number;
+  conversation_id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export function getDocumentById(
+  d1: D1Database,
+  args: getDocumentByIdParams
+): Query<getDocumentByIdRow | null> {
+  const ps = d1
+    .prepare(getDocumentByIdQuery)
+    .bind(args.id);
+  return {
+    then(onFulfilled?: (value: getDocumentByIdRow | null) => void, onRejected?: (reason?: any) => void) {
+      ps.first<RawgetDocumentByIdRow | null>()
+        .then((raw: RawgetDocumentByIdRow | null) => raw ? {
+          id: raw.id,
+          conversationId: raw.conversation_id,
+          content: raw.content,
+          createdAt: raw.created_at,
+          updatedAt: raw.updated_at,
+        } : null)
         .then(onFulfilled).catch(onRejected);
     },
     batch() { return ps; },

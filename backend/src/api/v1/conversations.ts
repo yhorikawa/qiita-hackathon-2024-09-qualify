@@ -1,9 +1,34 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
+import type * as model from "../../gen/sqlc/models";
 import * as db from "../../gen/sqlc/querier";
 import { fetchChatGPTResponse } from "../../util/openai";
 import type { Bindings } from "./index";
+
+interface ConversationsResponse {
+  success: boolean;
+  data: { conversations: model.Conversations[] };
+  error: string[];
+}
+
+interface ConversationResponse {
+  success: boolean;
+  data: { conversation: model.Conversations };
+  error: string[];
+}
+
+interface MessagesResponse {
+  success: boolean;
+  data: { messages: model.Messages[] };
+  error: string[];
+}
+
+interface MessageResponse {
+  success: boolean;
+  data: { message: model.Messages };
+  error: string[];
+}
 
 const app = new Hono<{ Bindings: Bindings }>();
 const route = app
@@ -20,17 +45,24 @@ const route = app
     ),
     async (c) => {
       const { id } = await c.req.valid("param");
+
+      const response: ConversationResponse = {
+        success: false,
+        data: { conversation: {} as model.Conversations },
+        error: [],
+      };
+
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
         c.status(404);
-        return c.json({ success: false, error: "Conversation not found" });
+        response.error.push("Conversation not found");
+        return c.json(response);
       }
 
+      response.success = true;
+      response.data.conversation = conversation;
       c.status(200);
-      return c.json({
-        success: true,
-        data: { conversation },
-      });
+      return c.json(response);
     },
   )
 
@@ -47,21 +79,28 @@ const route = app
     ),
     async (c) => {
       const { id } = await c.req.valid("param");
+
+      const response: MessagesResponse = {
+        success: false,
+        data: { messages: [] },
+        error: [],
+      };
+
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
         c.status(404);
-        return c.json({ success: false, error: "Conversation not found" });
+        response.error.push("Conversation not found");
+        return c.json(response);
       }
 
       const messages = await db.getMessagesByConversationId(c.env.DB, {
         conversationId: conversation.id,
       });
 
+      response.success = true;
+      response.data.messages = messages.results;
       c.status(200);
-      return c.json({
-        success: true,
-        data: { messages: messages.results },
-      });
+      return c.json(response);
     },
   )
 
@@ -73,13 +112,17 @@ const route = app
       const code = crypto.randomUUID();
       await db.createConversation(c.env.DB, { code });
 
+      const response: ConversationResponse = {
+        success: false,
+        data: { conversation: {} as model.Conversations },
+        error: [],
+      };
+
       const conversation = await db.getConversationByCode(c.env.DB, { code });
       if (!conversation) {
         c.status(500);
-        return c.json({
-          success: false,
-          error: "Failed to create conversation",
-        });
+        response.error.push("Failed to create conversation");
+        return c.json(response);
       }
 
       await db.createMessage(c.env.DB, {
@@ -95,11 +138,10 @@ const route = app
         message: aiResponse,
       });
 
+      response.success = true;
+      response.data.conversation = conversation;
       c.status(201);
-      return c.json({
-        success: true,
-        data: { conversation_id: conversation.id, ai_response: aiResponse },
-      });
+      return c.json(response);
     },
   )
 
@@ -119,13 +161,17 @@ const route = app
       const { message } = await c.req.valid("json");
       const { id } = await c.req.valid("param");
 
+      const response: ConversationResponse = {
+        success: false,
+        data: { conversation: {} as model.Conversations },
+        error: [],
+      };
+
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
         c.status(500);
-        return c.json({
-          success: false,
-          error: "Failed to create conversation",
-        });
+        response.error.push("Conversation not found");
+        return c.json(response);
       }
 
       await db.createMessage(c.env.DB, {
@@ -141,7 +187,7 @@ const route = app
           content: message,
         },
       ];
-      const response = await fetchChatGPTResponse(
+      const chatGPTResponse = await fetchChatGPTResponse(
         c.env.OPENAI_API_KEY,
         messages,
       );
@@ -149,16 +195,13 @@ const route = app
       await db.createMessage(c.env.DB, {
         conversationId: conversation.id,
         sender: "ai",
-        message: response.choices[0].message.content,
+        message: chatGPTResponse.choices[0].message.content,
       });
+
+      response.success = true;
+      response.data.conversation = conversation;
       c.status(201);
-      return c.json({
-        success: true,
-        data: {
-          conversation_id: id,
-          ai_response: response.choices[0].message.content,
-        },
-      });
+      return c.json(response);
     },
   );
 
