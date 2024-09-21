@@ -103,14 +103,24 @@ const route = app
     zValidator("json", z.object({ message: z.string() })),
     async (c) => {
       const { message } = await c.req.valid("json");
-      const conversationId = crypto.randomUUID();
-      await db.createConversation(c.env.DB, { id: conversationId });
 
       const response: ConversationResponse = {
         success: false,
         data: { conversation: {} as model.Conversations },
         error: [],
       };
+
+      const conversationId = crypto.randomUUID();
+      await db.createConversation(c.env.DB, { id: conversationId });
+
+      const conversation = await db.getConversationById(c.env.DB, {
+        id: conversationId,
+      });
+      if (!conversation) {
+        c.status(500);
+        response.error.push("Failed to create conversation");
+        return c.json(response);
+      }
 
       await db.createMessage(c.env.DB, {
         id: crypto.randomUUID(),
@@ -128,7 +138,7 @@ const route = app
       });
 
       response.success = true;
-      response.data.conversation;
+      response.data.conversation = conversation;
       c.status(201);
       return c.json(response);
     },
