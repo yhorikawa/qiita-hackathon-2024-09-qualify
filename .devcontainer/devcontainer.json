@@ -19,7 +19,8 @@
         "github.copilot",
         "EditorConfig.EditorConfig",
         "bradlc.vscode-tailwindcss",
-        "humao.rest-client"
+        "humao.rest-client",
+        "qwtel.sqlite-viewer"
       ]
     }
   }
