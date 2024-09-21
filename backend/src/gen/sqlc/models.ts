@@ -5,6 +5,7 @@
 
 export type Conversations = {
   id: number;
+  code: string;
   createdAt: string;
   updatedAt: string;
 };

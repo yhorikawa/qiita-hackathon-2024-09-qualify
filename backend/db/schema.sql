@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS Conversations (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+  code TEXT NOT NULL,
 	created_at TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime')),
 	updated_at TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime'))
 );

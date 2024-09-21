@@ -9,6 +9,54 @@ type Query<T> = {
   then(onFulfilled?: (value: T) => void, onRejected?: (reason?: any) => void): void;
   batch(): D1PreparedStatement;
 }
+const createConversationQuery = `-- name: createConversation :exec
+INSERT INTO Conversations (code) VALUES (?1)`;
+
+export type createConversationParams = {
+  code: string;
+};
+
+export function createConversation(
+  d1: D1Database,
+  args: createConversationParams
+): Query<D1Result> {
+  const ps = d1
+    .prepare(createConversationQuery)
+    .bind(args.code);
+  return {
+    then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
+      ps.run()
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
+const createMessageQuery = `-- name: createMessage :exec
+INSERT INTO Messages (conversation_id, sender, message) VALUES (?1, ?2, ?3)`;
+
+export type createMessageParams = {
+  conversationId: number;
+  sender: string;
+  message: string;
+};
+
+export function createMessage(
+  d1: D1Database,
+  args: createMessageParams
+): Query<D1Result> {
+  const ps = d1
+    .prepare(createMessageQuery)
+    .bind(args.conversationId, args.sender, args.message);
+  return {
+    then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
+      ps.run()
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
 const getConversationMessagesQuery = `-- name: getConversationMessages :many
 SELECT
     id, conversation_id, sender, message, created_at, updated_at
