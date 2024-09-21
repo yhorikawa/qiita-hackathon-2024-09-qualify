@@ -10,10 +10,10 @@ type Query<T> = {
   batch(): D1PreparedStatement;
 }
 const createConversationQuery = `-- name: createConversation :exec
-INSERT INTO Conversations (code) VALUES (?1)`;
+INSERT INTO Conversations (id) VALUES (?1)`;
 
 export type createConversationParams = {
-  code: string;
+  id: string;
 };
 
 export function createConversation(
@@ -22,7 +22,7 @@ export function createConversation(
 ): Query<D1Result> {
   const ps = d1
     .prepare(createConversationQuery)
-    .bind(args.code);
+    .bind(args.id);
   return {
     then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
       ps.run()
@@ -32,76 +32,26 @@ export function createConversation(
   }
 }
 
-const getConversationByCodeQuery = `-- name: getConversationByCode :one
-SELECT
-    id, code, created_at, updated_at
-FROM
-    Conversations
-WHERE
-    code = ?1`;
-
-export type getConversationByCodeParams = {
-  code: string;
-};
-
-export type getConversationByCodeRow = {
-  id: number;
-  code: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type RawgetConversationByCodeRow = {
-  id: number;
-  code: string;
-  created_at: string;
-  updated_at: string;
-};
-
-export function getConversationByCode(
-  d1: D1Database,
-  args: getConversationByCodeParams
-): Query<getConversationByCodeRow | null> {
-  const ps = d1
-    .prepare(getConversationByCodeQuery)
-    .bind(args.code);
-  return {
-    then(onFulfilled?: (value: getConversationByCodeRow | null) => void, onRejected?: (reason?: any) => void) {
-      ps.first<RawgetConversationByCodeRow | null>()
-        .then((raw: RawgetConversationByCodeRow | null) => raw ? {
-          id: raw.id,
-          code: raw.code,
-          createdAt: raw.created_at,
-          updatedAt: raw.updated_at,
-        } : null)
-        .then(onFulfilled).catch(onRejected);
-    },
-    batch() { return ps; },
-  }
-}
-
 const getConversationByIdQuery = `-- name: getConversationById :one
 SELECT
-    id, code, created_at, updated_at
+    id, created_at, updated_at
 FROM
     Conversations
 WHERE
     id = ?1`;
 
 export type getConversationByIdParams = {
-  id: number;
+  id: string;
 };
 
 export type getConversationByIdRow = {
-  id: number;
-  code: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetConversationByIdRow = {
-  id: number;
-  code: string;
+  id: string;
   created_at: string;
   updated_at: string;
 };
@@ -118,7 +68,6 @@ export function getConversationById(
       ps.first<RawgetConversationByIdRow | null>()
         .then((raw: RawgetConversationByIdRow | null) => raw ? {
           id: raw.id,
-          code: raw.code,
           createdAt: raw.created_at,
           updatedAt: raw.updated_at,
         } : null)
@@ -129,10 +78,11 @@ export function getConversationById(
 }
 
 const createMessageQuery = `-- name: createMessage :exec
-INSERT INTO Messages (conversation_id, sender, message) VALUES (?1, ?2, ?3)`;
+INSERT INTO Messages (id, conversation_id, sender, message) VALUES (?1, ?2, ?3, ?4)`;
 
 export type createMessageParams = {
-  conversationId: number;
+  id: string;
+  conversationId: string;
   sender: string;
   message: string;
 };
@@ -143,7 +93,7 @@ export function createMessage(
 ): Query<D1Result> {
   const ps = d1
     .prepare(createMessageQuery)
-    .bind(args.conversationId, args.sender, args.message);
+    .bind(args.id, args.conversationId, args.sender, args.message);
   return {
     then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
       ps.run()
@@ -155,32 +105,34 @@ export function createMessage(
 
 const getMessagesByConversationIdQuery = `-- name: getMessagesByConversationId :many
 SELECT
-    id, conversation_id, sender, message, created_at, updated_at
+    id, conversation_id, sender, message, send_at_unix_time, created_at, updated_at
 FROM
     Messages
 WHERE
     conversation_id = ?1
 ORDER BY
-    created_at asc, id asc`;
+    send_at_unix_time asc`;
 
 export type getMessagesByConversationIdParams = {
-  conversationId: number;
+  conversationId: string;
 };
 
 export type getMessagesByConversationIdRow = {
-  id: number;
-  conversationId: number;
+  id: string;
+  conversationId: string;
   sender: string;
   message: string;
+  sendAtUnixTime: number | null;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetMessagesByConversationIdRow = {
-  id: number;
-  conversation_id: number;
+  id: string;
+  conversation_id: string;
   sender: string;
   message: string;
+  send_at_unix_time: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -202,6 +154,7 @@ export function getMessagesByConversationId(
             conversationId: raw.conversation_id,
             sender: raw.sender,
             message: raw.message,
+            sendAtUnixTime: raw.send_at_unix_time,
             createdAt: raw.created_at,
             updatedAt: raw.updated_at,
           }}),
@@ -218,19 +171,19 @@ SELECT
 FROM
     Documents
 ORDER BY
-    created_at DESC, id DESC`;
+    created_at DESC`;
 
 export type getDocumentsRow = {
-  id: number;
-  conversationId: number;
+  id: string;
+  conversationId: string;
   content: string;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetDocumentsRow = {
-  id: number;
-  conversation_id: number;
+  id: string;
+  conversation_id: string;
   content: string;
   created_at: string;
   updated_at: string;
@@ -261,10 +214,11 @@ export function getDocuments(
 }
 
 const createDocumentQuery = `-- name: createDocument :exec
-INSERT INTO Documents (conversation_id, content) VALUES (?1, ?2)`;
+INSERT INTO Documents (id, conversation_id, content) VALUES (?1, ?2, ?3)`;
 
 export type createDocumentParams = {
-  conversationId: number;
+  id: string;
+  conversationId: string;
   content: string;
 };
 
@@ -274,7 +228,7 @@ export function createDocument(
 ): Query<D1Result> {
   const ps = d1
     .prepare(createDocumentQuery)
-    .bind(args.conversationId, args.content);
+    .bind(args.id, args.conversationId, args.content);
   return {
     then(onFulfilled?: (value: D1Result) => void, onRejected?: (reason?: any) => void) {
       ps.run()
@@ -293,20 +247,20 @@ WHERE
     id = ?1`;
 
 export type getDocumentByIdParams = {
-  id: number;
+  id: string;
 };
 
 export type getDocumentByIdRow = {
-  id: number;
-  conversationId: number;
+  id: string;
+  conversationId: string;
   content: string;
   createdAt: string;
   updatedAt: string;
 };
 
 type RawgetDocumentByIdRow = {
-  id: number;
-  conversation_id: number;
+  id: string;
+  conversation_id: string;
   content: string;
   created_at: string;
   updated_at: string;

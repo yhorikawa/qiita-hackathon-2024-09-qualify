@@ -4,24 +4,24 @@
 //   sqlc-gen-ts-d1 v0.0.0-a@dfd4bfef4736967ca17cc23d18de20920fbd196998fe7aa191a205439d63fb58
 
 export type Conversations = {
-  id: number;
-  code: string;
+  id: string;
   createdAt: string;
   updatedAt: string;
 };
 
 export type Messages = {
-  id: number;
-  conversationId: number;
+  id: string;
+  conversationId: string;
   sender: string;
   message: string;
+  sendAtUnixTime: number | null;
   createdAt: string;
   updatedAt: string;
 };
 
 export type Documents = {
-  id: number;
-  conversationId: number;
+  id: string;
+  conversationId: string;
   content: string;
   createdAt: string;
   updatedAt: string;
