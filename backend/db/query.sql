@@ -12,6 +12,14 @@ WHERE
 -- name: createMessage :exec
 INSERT INTO Messages (id, conversation_id, sender, message) VALUES (@id, @conversation_id, @sender, @message);
 
+-- name: updateConversationAskCount :exec
+UPDATE
+    Conversations
+SET
+    ask_count = @ask_count
+WHERE
+    id = @id;
+
 -- name: getMessagesByConversationId :many
 SELECT
     *

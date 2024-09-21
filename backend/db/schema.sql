@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS Conversations (
   id TEXT PRIMARY KEY,
+  ask_count INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime')),
   updated_at TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime'))
 );

@@ -183,6 +183,18 @@ const route = app
         message,
       });
 
+      const askCount = conversation.askCount + 1;
+      await db.updateConversationAskCount(c.env.DB, {
+        id: conversation.id,
+        askCount,
+      });
+      if (askCount > 3) {
+        response.success = true;
+        response.data.conversation = conversation;
+        c.status(201);
+        return c.json(response);
+      }
+
       const messages = [
         { role: "system", content: systemAskChat },
         {
@@ -229,10 +241,8 @@ const route = app
       const conversation = await db.getConversationById(c.env.DB, { id });
       if (!conversation) {
         c.status(404);
-        return c.json({
-          success: false,
-          error: "Failed to create conversation",
-        });
+        response.error.push("Failed to create conversation");
+        return c.json(response);
       }
 
       const messages = await db.getMessagesByConversationId(c.env.DB, {
@@ -267,10 +277,8 @@ const route = app
       const document = await db.getDocumentById(c.env.DB, { id: documentId });
       if (!document) {
         c.status(500);
-        return c.json({
-          success: false,
-          error: "Failed to create document",
-        });
+        response.error.push("Failed to create document");
+        return c.json(response);
       }
 
       response.success = true;
@@ -297,7 +305,7 @@ const systemDocument = `
   あなたは、ドキュメントをまとめるプロです。
   聞かれた内容を解釈して、マークダウンでドキュメントを作成してください。
   ネットに公開するので、情報は慎重に。
-  ドキュメントはmax_completion_tokens: 300で収まる範囲で作成してください。
+  ドキュメントはmax_completion_tokens: 300で必ず収まる範囲で作成してください。
   あと、マークダウンは、コードブロックではなく、ただの文字列としてください。
 
   回答するのは、まとめたマークダウンのみで良いです。
