@@ -39,3 +39,7 @@ Content-Type: application/json
 ###
 POST {{host}}/api/v1/conversations/1c0c86d6-ea23-418f-9a45-d67cbd073b3b/create-document
 Content-Type: application/json
+
+{
+  "message": "認証APIを実装する記事を作りたい。"
+}
