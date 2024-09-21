@@ -31,17 +31,18 @@ export const usePostChat = (updateChat: () => void) => {
     setIsLoading(true);
     try {
       const count = await trigger({ content: text, id });
-      if (count > 2) {
-        router.push(`/articles/${id}`);
-      } else {
-        updateChat();
+      if (count === 3) {
+        await client.api.v1.conversations[":id"]["create-document"].$post({
+          param: { id },
+        });
       }
+      updateChat();
     } catch (error) {
       console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [trigger, text, id, router, updateChat]);
+  }, [trigger, text, id, updateChat]);
 
   return {
     text,
