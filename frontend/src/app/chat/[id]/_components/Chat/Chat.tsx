@@ -1,5 +1,7 @@
 "use client";
 import type { FC } from "react";
+import { MessageBubble } from "#/components/MessageBubble";
+import { ReplyMessage } from "#/components/ReplyMessage";
 import { ChatInput } from "../ChatInput";
 import { useGetConversationsList } from "./use-get-conversations-list";
 
@@ -8,7 +10,7 @@ export const Chat: FC = () => {
   if (!data) return null;
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       {data.data.messages.map(({ sender, message, id }) => {
         return (
           <ChatItem
@@ -27,5 +29,13 @@ const ChatItem: FC<{ position: "left" | "right"; message: string }> = ({
   position,
   message,
 }) => {
-  return <div style={{ textAlign: position }}>{message}</div>;
+  return position === "right" ? (
+    <div style={{ textAlign: position }}>
+      <MessageBubble>{message}</MessageBubble>
+    </div>
+  ) : (
+    <div style={{ textAlign: position }}>
+      <ReplyMessage message={message} />
+    </div>
+  );
 };

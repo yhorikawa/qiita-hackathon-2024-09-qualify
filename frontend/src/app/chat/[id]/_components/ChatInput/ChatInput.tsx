@@ -1,12 +1,19 @@
 "use client";
 import type { FC } from "react";
+import { TextArea } from "#/components/TextArea";
 import { usePostChat } from "./use-post-chat";
 
 export const ChatInput: FC<{ updateChat: () => void }> = ({ updateChat }) => {
   const { text, setText, handleAction, isLoading } = usePostChat(updateChat);
   return (
     <>
-      <input
+      <TextArea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onClick={handleAction}
+        disabled={isLoading}
+      />
+      {/* <input
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -14,7 +21,7 @@ export const ChatInput: FC<{ updateChat: () => void }> = ({ updateChat }) => {
       />
       <button onClick={handleAction} disabled={isLoading} type="button">
         ✈
-      </button>
+      </button> */}
     </>
   );
 };

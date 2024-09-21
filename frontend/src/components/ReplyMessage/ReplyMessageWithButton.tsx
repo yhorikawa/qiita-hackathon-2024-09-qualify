@@ -1,12 +1,17 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { FC } from "react";
 import AIMessageIcon from "./icon/aIMessageIcon.png";
 
 type Props = {
   message: string;
+  conversationId: string;
 };
 
-export const ReplyMessage: FC<Props> = ({ message }) => {
+export const ReplyMessageWithButton: FC<Props> = ({
+  message,
+  conversationId,
+}) => {
   return (
     <>
       {/** hrefの値は後で適切なものに変更 */}
@@ -20,6 +25,14 @@ export const ReplyMessage: FC<Props> = ({ message }) => {
         />
         <p>{message}</p>
       </div>
+      <p className="mt-4 ml-10">
+        <Link
+          href={`/result/${conversationId}`}
+          className="py-2 px-4 rounded-md font-bold text-lg focus:outline-offset-[3px] text-white bg-violet-800 hover:bg-violet-600"
+        >
+          作成した記事を表示する
+        </Link>
+      </p>
     </>
   );
 };
