@@ -183,6 +183,18 @@ const route = app
         message,
       });
 
+      const askCount = conversation.askCount + 1;
+      await db.updateConversationAskCount(c.env.DB, {
+        id: conversation.id,
+        askCount,
+      });
+      if (askCount > 3) {
+        response.success = true;
+        response.data.conversation = conversation;
+        c.status(201);
+        return c.json(response);
+      }
+
       const messages = [
         { role: "system", content: systemAskChat },
         {
