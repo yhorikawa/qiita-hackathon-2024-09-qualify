@@ -231,6 +231,7 @@ const route = app
         c.status(404);
         return c.json({
           success: false,
+          data: { conversation: {} },
           error: "Failed to create conversation",
         });
       }
@@ -269,6 +270,7 @@ const route = app
         c.status(500);
         return c.json({
           success: false,
+          data: { document: {} },
           error: "Failed to create document",
         });
       }
