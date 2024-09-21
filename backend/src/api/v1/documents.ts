@@ -35,10 +35,7 @@ const route = app
     zValidator(
       "param",
       z.object({
-        id: z
-          .string()
-          .transform((v) => Number.parseInt(v))
-          .refine((v) => !Number.isNaN(v), { message: "not a number" }),
+        id: z.string().uuid(),
       }),
     ),
     async (c) => {

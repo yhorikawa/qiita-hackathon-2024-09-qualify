@@ -37,10 +37,7 @@ const route = app
     zValidator(
       "param",
       z.object({
-        id: z
-          .string()
-          .transform((v) => Number.parseInt(v))
-          .refine((v) => !Number.isNaN(v), { message: "not a number" }),
+        id: z.string().uuid(),
       }),
     ),
     async (c) => {
@@ -71,10 +68,7 @@ const route = app
     zValidator(
       "param",
       z.object({
-        id: z
-          .string()
-          .transform((v) => Number.parseInt(v))
-          .refine((v) => !Number.isNaN(v), { message: "not a number" }),
+        id: z.string(),
       }),
     ),
     async (c) => {
@@ -109,8 +103,8 @@ const route = app
     zValidator("json", z.object({ message: z.string() })),
     async (c) => {
       const { message } = await c.req.valid("json");
-      const code = crypto.randomUUID();
-      await db.createConversation(c.env.DB, { code });
+      const conversationId = crypto.randomUUID();
+      await db.createConversation(c.env.DB, { id: conversationId });
 
       const response: ConversationResponse = {
         success: false,
@@ -118,28 +112,23 @@ const route = app
         error: [],
       };
 
-      const conversation = await db.getConversationByCode(c.env.DB, { code });
-      if (!conversation) {
-        c.status(500);
-        response.error.push("Failed to create conversation");
-        return c.json(response);
-      }
-
       await db.createMessage(c.env.DB, {
-        conversationId: conversation.id,
+        id: crypto.randomUUID(),
+        conversationId,
         sender: "user",
         message,
       });
 
       const aiResponse = "Hello! How can I help you today?";
       await db.createMessage(c.env.DB, {
-        conversationId: conversation.id,
+        id: crypto.randomUUID(),
+        conversationId,
         sender: "ai",
         message: aiResponse,
       });
 
       response.success = true;
-      response.data.conversation = conversation;
+      response.data.conversation;
       c.status(201);
       return c.json(response);
     },
@@ -151,10 +140,7 @@ const route = app
     zValidator(
       "param",
       z.object({
-        id: z
-          .string()
-          .transform((v) => Number.parseInt(v))
-          .refine((v) => !Number.isNaN(v), { message: "not a number" }),
+        id: z.string().uuid(),
       }),
     ),
     async (c) => {
@@ -175,6 +161,7 @@ const route = app
       }
 
       await db.createMessage(c.env.DB, {
+        id: crypto.randomUUID(),
         conversationId: conversation.id,
         sender: "user",
         message,
@@ -193,6 +180,7 @@ const route = app
       );
 
       await db.createMessage(c.env.DB, {
+        id: crypto.randomUUID(),
         conversationId: conversation.id,
         sender: "ai",
         message: chatGPTResponse.choices[0].message.content,
