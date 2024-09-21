@@ -23,7 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <HeaderLayout />
         <main className="bg-violet-50">
-          <div className="mx-auto max-w-md min-h-svh relative">{children}</div>
+          <div className="mx-auto max-w-md min-h-svh relative py-12">
+            {children}
+          </div>
         </main>
         <PrelineScript />
       </body>
