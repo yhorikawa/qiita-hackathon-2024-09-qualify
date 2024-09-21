@@ -16,6 +16,9 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      opacity: {
+        "87": ".87",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
