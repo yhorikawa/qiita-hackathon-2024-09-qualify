@@ -1,0 +1,12 @@
+@host = http://localhost:8787
+
+###
+GET {{host}}/api/v1
+
+###
+POST {{host}}/api/v1/ai/conversations/start
+Content-Type: application/json
+
+{
+  "message": "my message"
+}
