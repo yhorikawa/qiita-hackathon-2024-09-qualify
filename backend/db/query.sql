@@ -28,17 +28,7 @@ FROM
 WHERE
     conversation_id = @conversation_id
 ORDER BY
-    created_at DESC;
-
--- name: getConversationMessages :many
-SELECT
-    *
-FROM
-    Messages
-WHERE
-    conversation_id = @conversation_id
-ORDER BY
-    created_at DESC;
+    created_at asc, id asc;
 
 -- name: getDocuments :many
 SELECT
@@ -46,7 +36,7 @@ SELECT
 FROM
     Documents
 ORDER BY
-    created_at DESC;
+    created_at DESC, id DESC;
 
 -- name: createDocument :exec
 INSERT INTO Documents (conversation_id, content) VALUES (@conversation_id, @content);

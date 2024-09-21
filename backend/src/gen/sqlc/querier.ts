@@ -161,7 +161,7 @@ FROM
 WHERE
     conversation_id = ?1
 ORDER BY
-    created_at DESC`;
+    created_at asc, id asc`;
 
 export type getMessagesByConversationIdParams = {
   conversationId: number;
@@ -212,72 +212,13 @@ export function getMessagesByConversationId(
   }
 }
 
-const getConversationMessagesQuery = `-- name: getConversationMessages :many
-SELECT
-    id, conversation_id, sender, message, created_at, updated_at
-FROM
-    Messages
-WHERE
-    conversation_id = ?1
-ORDER BY
-    created_at DESC`;
-
-export type getConversationMessagesParams = {
-  conversationId: number;
-};
-
-export type getConversationMessagesRow = {
-  id: number;
-  conversationId: number;
-  sender: string;
-  message: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type RawgetConversationMessagesRow = {
-  id: number;
-  conversation_id: number;
-  sender: string;
-  message: string;
-  created_at: string;
-  updated_at: string;
-};
-
-export function getConversationMessages(
-  d1: D1Database,
-  args: getConversationMessagesParams
-): Query<D1Result<getConversationMessagesRow>> {
-  const ps = d1
-    .prepare(getConversationMessagesQuery)
-    .bind(args.conversationId);
-  return {
-    then(onFulfilled?: (value: D1Result<getConversationMessagesRow>) => void, onRejected?: (reason?: any) => void) {
-      ps.all<RawgetConversationMessagesRow>()
-        .then((r: D1Result<RawgetConversationMessagesRow>) => { return {
-          ...r,
-          results: r.results.map((raw: RawgetConversationMessagesRow) => { return {
-            id: raw.id,
-            conversationId: raw.conversation_id,
-            sender: raw.sender,
-            message: raw.message,
-            createdAt: raw.created_at,
-            updatedAt: raw.updated_at,
-          }}),
-        }})
-        .then(onFulfilled).catch(onRejected);
-    },
-    batch() { return ps; },
-  }
-}
-
 const getDocumentsQuery = `-- name: getDocuments :many
 SELECT
     id, conversation_id, content, created_at, updated_at
 FROM
     Documents
 ORDER BY
-    created_at DESC`;
+    created_at DESC, id DESC`;
 
 export type getDocumentsRow = {
   id: number;
