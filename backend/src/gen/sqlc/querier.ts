@@ -153,6 +153,65 @@ export function createMessage(
   }
 }
 
+const getMessagesByConversationIdQuery = `-- name: getMessagesByConversationId :many
+SELECT
+    id, conversation_id, sender, message, created_at, updated_at
+FROM
+    Messages
+WHERE
+    conversation_id = ?1
+ORDER BY
+    created_at DESC`;
+
+export type getMessagesByConversationIdParams = {
+  conversationId: number;
+};
+
+export type getMessagesByConversationIdRow = {
+  id: number;
+  conversationId: number;
+  sender: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RawgetMessagesByConversationIdRow = {
+  id: number;
+  conversation_id: number;
+  sender: string;
+  message: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export function getMessagesByConversationId(
+  d1: D1Database,
+  args: getMessagesByConversationIdParams
+): Query<D1Result<getMessagesByConversationIdRow>> {
+  const ps = d1
+    .prepare(getMessagesByConversationIdQuery)
+    .bind(args.conversationId);
+  return {
+    then(onFulfilled?: (value: D1Result<getMessagesByConversationIdRow>) => void, onRejected?: (reason?: any) => void) {
+      ps.all<RawgetMessagesByConversationIdRow>()
+        .then((r: D1Result<RawgetMessagesByConversationIdRow>) => { return {
+          ...r,
+          results: r.results.map((raw: RawgetMessagesByConversationIdRow) => { return {
+            id: raw.id,
+            conversationId: raw.conversation_id,
+            sender: raw.sender,
+            message: raw.message,
+            createdAt: raw.created_at,
+            updatedAt: raw.updated_at,
+          }}),
+        }})
+        .then(onFulfilled).catch(onRejected);
+    },
+    batch() { return ps; },
+  }
+}
+
 const getConversationMessagesQuery = `-- name: getConversationMessages :many
 SELECT
     id, conversation_id, sender, message, created_at, updated_at

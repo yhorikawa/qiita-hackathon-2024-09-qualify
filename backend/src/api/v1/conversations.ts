@@ -6,6 +6,37 @@ import type { Bindings } from "./index";
 
 const app = new Hono<{ Bindings: Bindings }>();
 const route = app
+  .get(
+    "/:id",
+    zValidator(
+      "param",
+      z.object({
+        id: z
+          .string()
+          .transform((v) => Number.parseInt(v))
+          .refine((v) => !Number.isNaN(v), { message: "not a number" }),
+      }),
+    ),
+    async (c) => {
+      const { id } = await c.req.valid("param");
+      const conversation = await db.getConversationById(c.env.DB, { id });
+      if (!conversation) {
+        c.status(404);
+        return c.json({ success: false, error: "Conversation not found" });
+      }
+
+      const messages = await db.getMessagesByConversationId(c.env.DB, {
+        conversationId: conversation.id,
+      });
+
+      c.status(200);
+      return c.json({
+        success: true,
+        data: { conversation, messages: messages.results },
+      });
+    },
+  )
+
   .post(
     "/start",
     zValidator("json", z.object({ message: z.string() })),
