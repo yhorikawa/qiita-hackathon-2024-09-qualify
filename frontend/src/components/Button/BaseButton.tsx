@@ -4,11 +4,11 @@ import { twMerge } from "tailwind-merge";
 type Props = {
   isLoading?: boolean;
   isDisabled?: boolean;
-  className?: string;
+  colors: string;
 };
 
 export const BaseButton: FC<PropsWithChildren<Props>> = ({
-  className = "text-white bg-violet-800 hover:bg-violet-600",
+  colors,
   children,
   isLoading = false,
   isDisabled = false,
@@ -18,7 +18,7 @@ export const BaseButton: FC<PropsWithChildren<Props>> = ({
       disabled={isDisabled}
       type="submit"
       className={twMerge(
-        className,
+        colors,
         "py-2 px-4 rounded-md font-bold text-lg",
         "focus:outline-offset-[3px]",
         "disabled:bg-black disabled:bg-opacity-35",
