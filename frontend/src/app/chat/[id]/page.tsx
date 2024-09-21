@@ -1,17 +1,13 @@
 import type { NextPage } from "next";
-import { client } from "#/lib/client";
+import { Chat } from "./_components";
+import { ChatInput } from "./_components/ChatInput";
 
 const Page: NextPage = async () => {
-  const res = await client.api.v1.$get();
-  if (!res.ok) return null;
-
-  const hello = await res.text();
-  console.log(hello);
-
   return (
-    <div>
-      <h1>{hello} Chat Page</h1>
-    </div>
+    <>
+      <Chat />
+      <ChatInput />
+    </>
   );
 };
 
