@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <HeaderLayout />
         <main className="bg-violet-50">
-          <div className="mx-auto max-w-5xl min-h-svh relative py-12">
+          <div className="mx-auto max-w-5xl min-h-svh relative p-12">
             {children}
           </div>
         </main>
