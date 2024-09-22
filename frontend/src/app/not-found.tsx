@@ -1,5 +1,3 @@
-import EntranceImage from "#/app/assets/entrance-image.png";
-
 export const runtime = "edge";
 
 export default function NotFound() {
@@ -7,21 +5,6 @@ export default function NotFound() {
     <>
       <div className="mx-auto max-w-md bg-slate-100 min-h-svh relative flex flex-col justify-center items-center">
         <div className="max-w-[50rem] flex flex-col mx-auto w-full h-full pb-20">
-          <header className="mb-auto flex justify-center z-50 w-full py-4">
-            <nav className="px-4 sm:px-6 lg:px-8" aria-label="Global">
-              <a
-                className="flex-none text-xl font-semibold sm:text-3xl"
-                href="/signin"
-              >
-                <img
-                  src={EntranceImage.src}
-                  alt="ボトルメッセージのイラスト"
-                  className="mx-auto inline-block max-w-full select-none"
-                />
-              </a>
-            </nav>
-          </header>
-
           <div className="text-center py-10 px-4 sm:px-6 lg:px-8">
             <h1 className="block text-7xl font-bold text-gray-800 sm:text-9xl">
               404
