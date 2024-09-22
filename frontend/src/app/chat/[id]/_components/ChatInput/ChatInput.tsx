@@ -1,5 +1,6 @@
 "use client";
 import type { FC } from "react";
+import { TextArea } from "#/components/TextArea";
 import { usePostChat } from "./use-post-chat";
 
 export const ChatInput: FC<{ updateChat: () => void; disabled: boolean }> = ({
@@ -9,20 +10,12 @@ export const ChatInput: FC<{ updateChat: () => void; disabled: boolean }> = ({
   const { text, setText, handleAction, isLoading } = usePostChat(updateChat);
   return (
     <>
-      <input
-        type="text"
+      <TextArea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        disabled={disabled || isLoading}
-        placeholder="ぷれーすほるだぁ"
-      />
-      <button
         onClick={handleAction}
         disabled={disabled || isLoading}
-        type="button"
-      >
-        ✈
-      </button>
+      />
     </>
   );
 };

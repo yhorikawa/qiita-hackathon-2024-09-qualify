@@ -41,6 +41,7 @@ export const usePostChat = (updateChat: () => void) => {
       console.error("Error:", error);
     } finally {
       setIsLoading(false);
+      setText("");
     }
   }, [trigger, text, id]);
 
