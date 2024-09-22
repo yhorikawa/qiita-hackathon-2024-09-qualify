@@ -2,6 +2,7 @@
 import type { FC } from "react";
 import { MessageBubble } from "#/components/MessageBubble";
 import { ReplyMessage } from "#/components/ReplyMessage";
+import { ReplyMessageWithButton } from "#/components/ReplyMessage";
 import { ChatInput } from "../ChatInput";
 import { useGetConversationsList } from "./use-get-conversations-list";
 
@@ -24,9 +25,10 @@ export const Chat: FC = () => {
         );
       })}
       {isCompleteChat && (
-        <a href={`/api/v1/conversations/${conversation.id}/redirect-document`}>
-          作成した記事を表示する
-        </a>
+        <ReplyMessageWithButton
+          message="記事を作成しました！"
+          url={`/api/v1/conversations/${conversation.id}/redirect-document`}
+        />
       )}
       <ChatInput disabled={isCompleteChat} updateChat={mutate} />
     </div>

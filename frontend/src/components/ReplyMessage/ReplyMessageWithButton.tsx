@@ -5,15 +5,12 @@ import AIMessageIcon from "./icon/aIMessageIcon.png";
 
 type Props = {
   message: string;
-  conversationId: string;
+  url: string;
 };
 
-export const ReplyMessageWithButton: FC<Props> = ({
-  message,
-  conversationId,
-}) => {
+export const ReplyMessageWithButton: FC<Props> = ({ message, url }) => {
   return (
-    <>
+    <div>
       {/** hrefの値は後で適切なものに変更 */}
       <div className="flex gap-2 items-center">
         <Image
@@ -27,12 +24,12 @@ export const ReplyMessageWithButton: FC<Props> = ({
       </div>
       <p className="mt-4 ml-10">
         <Link
-          href={`/result/${conversationId}`}
+          href={url}
           className="py-2 px-4 rounded-md font-bold text-lg focus:outline-offset-[3px] text-white bg-violet-800 hover:bg-violet-600"
         >
           作成した記事を表示する
         </Link>
       </p>
-    </>
+    </div>
   );
 };
