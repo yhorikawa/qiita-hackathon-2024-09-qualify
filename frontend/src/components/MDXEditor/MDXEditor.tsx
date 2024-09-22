@@ -1,6 +1,15 @@
 "use client";
 
-import { MDXEditor, type MDXEditorMethods, diffSourcePlugin, headingsPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, thematicBreakPlugin } from "@mdxeditor/editor";
+import {
+  MDXEditor,
+  type MDXEditorMethods,
+  diffSourcePlugin,
+  headingsPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  quotePlugin,
+  thematicBreakPlugin,
+} from "@mdxeditor/editor";
 import type { FC } from "react";
 
 interface EditorProps {
@@ -21,7 +30,7 @@ const Editor: FC<EditorProps> = ({ markdown, editorRef }) => {
         quotePlugin(),
         thematicBreakPlugin(),
         markdownShortcutPlugin(),
-        diffSourcePlugin({ viewMode: 'source' }),
+        diffSourcePlugin({ viewMode: "source" }),
       ]}
     />
   );
