@@ -20,7 +20,7 @@ interface ConversationResponse {
 
 interface MessagesResponse {
   success: boolean;
-  data: { messages: model.Messages[] };
+  data: { messages: model.Messages[]; conversation: model.Conversations };
   error: string[];
 }
 
@@ -82,7 +82,7 @@ const route = app
 
       const response: MessagesResponse = {
         success: false,
-        data: { messages: [] },
+        data: { messages: [], conversation: {} as model.Conversations },
         error: [],
       };
 
@@ -99,6 +99,7 @@ const route = app
 
       response.success = true;
       response.data.messages = messages.results;
+      response.data.conversation = conversation;
       c.status(200);
       return c.json(response);
     },
@@ -205,16 +206,25 @@ const route = app
         return c.json(response);
       }
 
-      const messages = [
+      const messages = await db.getMessagesByConversationId(c.env.DB, {
+        conversationId: conversation.id,
+      });
+      const messagelist = messages.results
+        .map((m) => {
+          return m.message;
+        })
+        .join("\n");
+
+      const gptRequestMessages = [
         { role: "system", content: systemAskChat },
         {
           role: "user",
-          content: message,
+          content: messagelist,
         },
       ];
       const chatGPTResponse = await fetchChatGPTResponse(
         c.env.OPENAI_API_KEY,
-        messages,
+        gptRequestMessages,
       );
 
       await db.createMessage(c.env.DB, {
@@ -295,6 +305,29 @@ const route = app
       response.data.document = document;
       c.status(201);
       return c.json(response);
+    },
+  )
+
+  .get(
+    "/:id/redirect-document",
+    zValidator(
+      "param",
+      z.object({
+        id: z.string().uuid(),
+      }),
+    ),
+    async (c) => {
+      const { id } = await c.req.valid("param");
+
+      const document = await db.getDocumentByConversationId(c.env.DB, {
+        conversationId: id,
+      });
+      if (!document) {
+        c.status(404);
+        return c.text("Document not found");
+      }
+
+      return c.redirect(`/articles/${document.id}`);
     },
   );
 

@@ -3,7 +3,10 @@ import type { FC } from "react";
 import { TextArea } from "#/components/TextArea";
 import { usePostChat } from "./use-post-chat";
 
-export const ChatInput: FC<{ updateChat: () => void }> = ({ updateChat }) => {
+export const ChatInput: FC<{ updateChat: () => void; disabled: boolean }> = ({
+  updateChat,
+  disabled,
+}) => {
   const { text, setText, handleAction, isLoading } = usePostChat(updateChat);
   return (
     <>
@@ -11,7 +14,7 @@ export const ChatInput: FC<{ updateChat: () => void }> = ({ updateChat }) => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         onClick={handleAction}
-        disabled={isLoading}
+        disabled={disabled || isLoading}
       />
     </>
   );
