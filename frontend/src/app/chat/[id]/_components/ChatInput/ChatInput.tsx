@@ -13,15 +13,6 @@ export const ChatInput: FC<{ updateChat: () => void }> = ({ updateChat }) => {
         onClick={handleAction}
         disabled={isLoading}
       />
-      {/* <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="ぷれーすほるだぁ"
-      />
-      <button onClick={handleAction} disabled={isLoading} type="button">
-        ✈
-      </button> */}
     </>
   );
 };
