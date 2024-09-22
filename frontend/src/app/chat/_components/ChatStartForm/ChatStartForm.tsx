@@ -31,6 +31,12 @@ export const ChatStartForm: FC = () => {
           AIアシスト開始
         </button>
       </div>
+      {isLoading && (
+        <div className="p-4 bg-black bg-opacity-40 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-white rounded-full border-t-transparent m-auto" />
+          <p className="mt-2 text-white">AIアシストを準備しています...</p>
+        </div>
+      )}
     </>
   );
 };
