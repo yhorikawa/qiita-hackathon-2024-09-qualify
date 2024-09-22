@@ -105,3 +105,14 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 }
+
+@layer utilities {
+  .scroll-box::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ブラウザのスクロールバーを消す場合 */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

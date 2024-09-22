@@ -20,11 +20,11 @@ export const TextArea: FC<Props> = ({
 }) => {
   return (
     <>
-      <div className="flex bg-white rounded-3xl py-2 pl-4 pr-1 items-center max-h-96">
+      <div className="flex bg-white rounded-3xl pl-4 pr-1 items-center">
         <Textarea
           value={value}
           onChange={onChange}
-          className="w-full resize-none focus-visible:ring-0 border-none focus-visible:ring-offset-0 py-1"
+          className="w-full resize-none focus-visible:ring-0 border-none focus-visible:ring-offset-0 min-h-4 leading-none mt-3"
           placeholder="質問に対する回答を入力してください"
         />
         <button

@@ -14,24 +14,26 @@ export const Chat: FC = () => {
   const isCompleteChat = conversation.askCount >= 4;
 
   return (
-    <div className="flex flex-col gap-6">
-      {data.data.messages.map(({ sender, message, id }) => {
-        return (
-          <ChatItem
-            key={id}
-            position={sender === "user" ? "right" : "left"}
-            message={message}
+    <>
+      <div className="flex flex-col gap-6 overflow-auto">
+        {data.data.messages.map(({ sender, message, id }) => {
+          return (
+            <ChatItem
+              key={id}
+              position={sender === "user" ? "right" : "left"}
+              message={message}
+            />
+          );
+        })}
+        {isCompleteChat && (
+          <ReplyMessageWithButton
+            message="記事を作成しました！"
+            url={`/api/v1/conversations/${conversation.id}/redirect-document`}
           />
-        );
-      })}
-      {isCompleteChat && (
-        <ReplyMessageWithButton
-          message="記事を作成しました！"
-          url={`/api/v1/conversations/${conversation.id}/redirect-document`}
-        />
-      )}
+        )}
+      </div>
       <ChatInput disabled={isCompleteChat} updateChat={mutate} />
-    </div>
+    </>
   );
 };
 
