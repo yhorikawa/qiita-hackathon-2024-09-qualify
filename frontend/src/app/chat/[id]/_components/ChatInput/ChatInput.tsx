@@ -9,7 +9,7 @@ export const ChatInput: FC<{ updateChat: () => void; disabled: boolean }> = ({
 }) => {
   const { text, setText, handleAction, isLoading } = usePostChat(updateChat);
   return (
-    <div className="pt-4 pb-10 sticky bottom-0 backdrop-blur-lg">
+    <div className="pt-4 pb-10 sticky bottom-0 backdrop-blur-lg px-2">
       <TextArea
         value={text}
         onChange={(e) => setText(e.target.value)}
