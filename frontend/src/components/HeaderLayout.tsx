@@ -1,7 +1,9 @@
 "use client";
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Logo from "#/app/assets/Logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +16,9 @@ export const HeaderLayout = () => {
   const path = usePathname();
 
   return (
-    <header className="bg-white py-2 px-20 flex justify-between items-center">
-      <p className="font-semibold text-sm leading-5">
-        なんかサービスロゴ的なもの
+    <header className="bg-white py-2 px-20 flex justify-between items-center sticky top-0">
+      <p className="py-2">
+        <Image src={Logo} alt="DocBuddyのロゴ" width={171} height={30} />
       </p>
       {path === "/" && (
         <DropdownMenu>
