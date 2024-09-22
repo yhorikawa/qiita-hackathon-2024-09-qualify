@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { PrelineScript } from "./_dependencies/PrelineScript";
 import "./globals.css";
+import '@mdxeditor/editor/style.css'
 import { HeaderLayout } from "#/components/HeaderLayout";
 
 const inter = Inter({ subsets: ["latin"] });
