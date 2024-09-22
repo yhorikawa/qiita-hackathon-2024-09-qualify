@@ -18,7 +18,9 @@ export const HeaderLayout = () => {
   return (
     <header className="bg-white py-2 px-20 flex justify-between items-center sticky top-0 z-10">
       <p className="py-2">
-        <Image src={Logo} alt="DocBuddyのロゴ" width={171} height={30} />
+        <Link href="/">
+          <Image src={Logo} alt="DocBuddyのロゴ" width={171} height={30} />
+        </Link>
       </p>
       {path === "/" && (
         <DropdownMenu>
