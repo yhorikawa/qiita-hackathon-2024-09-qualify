@@ -11,6 +11,7 @@ export const runtime = "edge";
 
 export const metadata: Metadata = {
   title: "DocBuddy",
+  description: "DocBuddy ~ 相棒のAIと壁打ちしながらドキュメント作成！ ~",
 };
 
 export default function RootLayout({
