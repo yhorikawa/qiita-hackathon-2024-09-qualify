@@ -10,8 +10,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const runtime = "edge";
 
 export const metadata: Metadata = {
-  title: "マンホールは大体円型PJ",
-  description: "マンホールは大体円型なPJです",
+  title: "DocBuddy",
+  description: "DocBuddy ~ 相棒のAIと壁打ちしながらドキュメント作成！ ~",
 };
 
 export default function RootLayout({
