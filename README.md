@@ -16,5 +16,8 @@ Qiita Hackathon 2024の予選で作成したサービスです
 	- AIと壁打ちしながら、思考を整理できる
 	- AIがドキュメントを作成してくれるので、コストがかからない
 
+## 当日発表資料
+https://speakerdeck.com/horikawa_dev/qiita-hackathon-2024-yu-xuan-fa-biao-zi-liao
+
 ## Demo
 https://github.com/user-attachments/assets/617adc91-9da2-4ca8-bfcb-f5dda7f86a65
